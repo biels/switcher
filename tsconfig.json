@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
     "target": "es6",
     "module": "CommonJS",
     "jsx": "react",
     "resolveJsonModule": true,
     "sourceMap": true,
-    "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "baseUrl": "./",
@@ -13,6 +13,26 @@
       "@/shared/*" :   ["src/shared/*"],
       "@/renderer/*" : ["src/renderer/*"],
       "@/main/*" :     ["src/main/*"]
-    }
+    },
+
+
+    "allowJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "allowUnreachableCode": true,
+    "allowSyntheticDefaultImports": true,
+    "pretty": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "useDefineForClassFields": true,
+    "emitDecoratorMetadata": true,
+    "listFiles": true
   }
 }
