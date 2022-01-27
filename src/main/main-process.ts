@@ -29,7 +29,7 @@ function createWindow(): BrowserWindow | null {
     });
 
     if (IS_DEV) {
-        win.webContents.openDevTools();
+        // win.webContents.openDevTools();
         win.loadURL(DEV_SERVER_URL);
     }
     else {
@@ -47,7 +47,7 @@ app.whenReady()
         if (!win) throw Error("BrowserWindow is null. Check main process initialization!");
         initialize();
 
-        win.maximize();
+        // win.maximize();
         enable(win.webContents);
 
         win.on("closed", () => {
