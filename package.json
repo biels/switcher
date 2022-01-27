@@ -32,15 +32,18 @@
     "@electron/remote": "^2.0.1",
     "@fontsource/roboto": "^4.5.1",
     "electron": "^16.0.6",
+    "encoding": "^0.1.13",
     "mobx": "^6.3.13",
     "mobx-react": "^7.2.1",
+    "node-powershell": "^5.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.2.1",
     "reflect-metadata": "^0.1.13",
     "styled-components": "^5.3.3",
     "ts-loader": "^9.2.6",
-    "tsyringe": "^4.6.0"
+    "tsyringe": "^4.6.0",
+    "zx": "^4.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
