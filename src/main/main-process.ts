@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, screen } from "electron";
 import { initialize, enable } from "@electron/remote/main";
 import "reflect-metadata"
 
@@ -10,13 +10,22 @@ const HTML_FILE_PATH = "renderer/index.html";
 
 function createWindow(): BrowserWindow | null {
 
+    let width = 600;
+    let height = 800;
     let win: BrowserWindow | null = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: width,
+        height: height,
+        // bottom right corner of screen.
+        x: screen.getPrimaryDisplay().bounds.width - width,
+        y: screen.getPrimaryDisplay().bounds.height - height,
+        maximizable: false,
+
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
-        }
+            contextIsolation: false,
+
+        },
+        alwaysOnTop: true,
     });
 
     if (IS_DEV) {

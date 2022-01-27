@@ -7,11 +7,6 @@ const HomeView = observer(() => {
     let counter = store.counter
     return (
         <div>
-            <h1>Home</h1>
-            <p>This is the initial view.</p>
-            <p>{counter}
-                <button onClick={() => store.counter++}>Hello</button>
-            </p>
             <button onClick={() => store.openWS([`C:\\Users\\biel\\projects\\switcher`])}>Open switcher</button>
             <button onClick={() => store.openWS([`C:\\Users\\biel\\projects\\switcher`], false)}>Open switcher no
                 close
@@ -19,7 +14,7 @@ const HomeView = observer(() => {
             <button onClick={() => store.openWS()}>Open all</button>
             <button onClick={() => store.stopWS(false)}>Close WS</button>
             <div>
-                <progress value={store.elapsedMs} max={store.totalMs}/>
+
 
             </div>
             <div>
