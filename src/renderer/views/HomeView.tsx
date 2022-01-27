@@ -1,7 +1,8 @@
 import React from 'react'
 import {useAppStore} from "@/renderer/core/AppStore";
+import {observer} from "mobx-react";
 
-export default function HomeView() {
+const HomeView = observer(() => {
     let store = useAppStore()
     let counter = store.counter
     return (
@@ -11,4 +12,5 @@ export default function HomeView() {
             <p>{counter} <button onClick={() => store.counter++}>Hello</button></p>
         </div>
     );
-}
+});
+export default HomeView

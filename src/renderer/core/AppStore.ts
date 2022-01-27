@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import {container, inject, singleton} from "tsyringe";
 import {makeAutoObservable, makeObservable, observable} from "mobx";
 

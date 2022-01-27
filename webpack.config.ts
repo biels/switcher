@@ -67,17 +67,19 @@ function mainConfiguration(env: Env): Configuration {
                 {
                     test: /\.ts$/,
                     exclude: /node_modules/,
-                    use: {
-                        loader: "babel-loader",
-                        options: {
-                            presets: [
-                                "@babel/preset-typescript",
-                            ],
-                            plugins: [
-                                "@babel/plugin-transform-runtime"
-                            ]
-                        }
-                    }
+                    // use: {
+                    //     loader: "babel-loader",
+                    //     options: {
+                    //         presets: [
+                    //             "@babel/preset-typescript",
+                    //         ],
+                    //         plugins: [
+                    //             "@babel/plugin-transform-runtime"
+                    //         ]
+                    //     }
+                    // }
+                    use: [{loader: "ts-loader", options: {transpileOnly: true}}],
+                    // exclude: /node_modules/,
                 }
             ]
         },
@@ -133,13 +135,17 @@ function RendererConfiguration(env: Env): Configuration {
 
         module: {
             rules: [
+
                 {
                     test: /\.(js|jsx|ts|tsx)$/,
+                    // exclude: /node_modules/,
+                    // use: {
+                    //     loader: "babel-loader",
+                    //     options: babelConfig
+                    // },
+                    use: [{loader: "ts-loader", options: {transpileOnly: true}}],
                     exclude: /node_modules/,
-                    use: {
-                        loader: "babel-loader",
-                        options: babelConfig
-                    }
+
                 },
                 {
                     test: /\.(png|jpe?g|gif|svg)$/,

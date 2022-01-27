@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import { initialize, enable } from "@electron/remote/main";
+import "reflect-metadata"
 
 declare const ENVIRONMENT: String;
 
