@@ -31,8 +31,10 @@
   "dependencies": {
     "@electron/remote": "^2.0.1",
     "@fontsource/roboto": "^4.5.1",
+    "cuid": "^2.1.8",
     "electron": "^16.0.6",
     "encoding": "^0.1.13",
+    "json5": "^2.2.0",
     "mobx": "^6.3.13",
     "mobx-react": "^7.2.1",
     "node-powershell": "^5.0.1",

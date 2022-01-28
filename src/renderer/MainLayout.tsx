@@ -50,7 +50,7 @@ const Body = styled.div`
   background-color: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.foreground};
   grid-area: body;
-  padding: 16px;
+  //padding: 16px;
 `;
 
 const Footer = styled.div`

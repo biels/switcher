@@ -2,6 +2,7 @@ import "reflect-metadata"
 import {container, inject, singleton} from "tsyringe";
 import {makeAutoObservable, makeObservable, observable} from "mobx";
 import {PowerShell} from 'node-powershell';
+import cuid from "cuid";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -12,11 +13,35 @@ export class AppStore {
     @observable
     projects: any[] = [
         {
-            id: '1',
-            open: [
-                {path: 'C:\\Users\\biel\\projects\\bis\\bis-admin'}
+            id: cuid(),
+            name: 'Switcher',
+            rootPath: 'C:\\Users\\biel\\projects\\switcher',
+            paths: [
+                {
+                    id: cuid(),
+                    path: './switcher',
+                    open: ['terminal', 'ide'],
+                    cmd: 'yarn start'
+                }
             ]
-        }
+        },  {
+            id: cuid(),
+            name: 'BIS',
+            rootPath: 'C:\\Users\\biel\\projects\\bis',
+            paths: [
+                {
+                    id: cuid(),
+                    path: './bis-admin',
+                    open: ['terminal', 'ide'],
+                    cmd: 'yarn dev'
+                }, {
+                    id: cuid(),
+                    path: './bis-server',
+                    open: ['terminal', 'ide'],
+                    cmd: 'yarn start:dev'
+                }
+            ]
+        },
     ]
     @observable
     counter = 0
