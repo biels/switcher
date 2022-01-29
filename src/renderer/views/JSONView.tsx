@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import styled from 'styled-components'
 import {observer} from 'mobx-react'
 import {useAppStore} from "@/renderer/core/AppStore";
+import json5 from "json5";
 
 const Container = styled.div`
     display: grid;
@@ -18,7 +19,7 @@ export const JSONView = observer((props: JSONViewProps) => {
     let projects = store.projects || [];
     return <Container>
         <pre>
-            {JSON.stringify(projects, null, 2)}
+            {json5.stringify(projects, null, 2)}
         </pre>
     </Container>
 })

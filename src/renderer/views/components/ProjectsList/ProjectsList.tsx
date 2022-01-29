@@ -4,6 +4,8 @@ import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {PathsList} from "@/renderer/views/components/ProjectsList/components/PathsList";
+import {MdDeleteOutline, MdOutlineSelectAll, MdPlayArrow} from "react-icons/md";
+import {GrCheckboxSelected} from "react-icons/gr";
 
 const Container = styled.div`
   display: grid;
@@ -84,6 +86,14 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         style={getListStyle(snapshot.isDraggingOver)}
+                        onContextMenu={(e) => {
+                            store.contextMenuStore.menuOptions = [
+                                {name: `Start`, icon: <MdPlayArrow/>, onClick: () => null, hotKey: 'Enter'},
+                                {name: `Select All`, icon: <MdOutlineSelectAll/>, onClick: () => null, hotKey: 'Ctrl + Enter'},
+                                {name: `Select Only`, icon: <GrCheckboxSelected/>, onClick: () => null},
+                            ]
+
+                        }}
                     >
                         {projects.map((item, index) => (
                             <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
