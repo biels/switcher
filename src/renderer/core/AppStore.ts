@@ -5,14 +5,19 @@ import {PowerShell} from 'node-powershell';
 import cuid from "cuid";
 import {ContextMenuStore} from "@/renderer/ContextMenu/ContextMenuStore";
 import * as _ from 'lodash'
+// import fs
+import * as fs from "fs";
+// import path
+import * as path from "path";
 import {ProjectController} from "@/renderer/core/ProjectController";
+
 export let useAppStore = () => {
     return container.resolve(AppStore);
 };
 
 @singleton()
 export class AppStore {
-    registeredFolders: string[] = [];
+    registeredFolders: { path }[] = [{path: 'C:\\Users\\biel\\projects'}, {path: 'C:\\Users\\biel\\projects\\sandbox'}, {path: 'C:\\Users\\biel\\projects\\git'}];
     projectPaths: string[] = [];
     @observable
     projects: any[] = [
@@ -28,7 +33,7 @@ export class AppStore {
                     cmd: 'yarn start'
                 }
             ]
-        },  {
+        }, {
             id: cuid(),
             name: 'BIS',
             rootPath: 'C:\\Users\\biel\\projects\\bis',
@@ -57,14 +62,17 @@ export class AppStore {
         this.startMonitoring()
         this.init()
     }
-    async init(){
-       await this.contextMenuStore.init()
+
+    async init() {
+        await this.contextMenuStore.init()
     }
 
-    async loadLocalData(){
+    async loadLocalData() {
 
     }
+
     projectControllerMap = {}
+
     getProjectController(projectId, initialData?: any, forceOverwrite = true) {
         if (!_.isString(projectId)) throw new Error(`projectId is not a string`)
         if (!projectId) throw new Error(`Tried to access ${projectId} project id`)
@@ -167,5 +175,40 @@ export class AppStore {
         await new Promise(resolve => setTimeout(resolve, delay))
     }
 
+    @observable.ref
+    scanResults = []
 
+    scanRegistredFolders() {
+        let directories = this.registeredFolders
+        // get all first level subdirectories
+        let subdirectories = directories.flatMap(d => d.path).map(p => {
+            let filterDir = p => f => {
+                if (f.startsWith('.')) return false
+                if (['node_modules', 'tmp', 'dist', 'out', 'dev-dist'].includes(f)) return false
+                let joined = fs.statSync(path.join(p, f));
+                if(this.registeredFolders.find(d => d.path === joined)) return false
+                return joined.isDirectory();
+            };
+            let subdirs = fs.readdirSync(p).filter(filterDir(p))
+            // return subdirs
+            // return subdirs
+            return subdirs.flatMap(s => {
+                let path1 = path.join(p, s);
+                let innerSubdirs = fs.readdirSync(path1).filter(filterDir(path1))
+                return {
+                    name: s,
+                    path: path1,
+                    folder: path.basename(p),
+                    subdirs: innerSubdirs
+                }
+            })
+            // return subdirs.map(s => path.join(p, s))
+        }).flat()
+        this.scanResults = subdirectories
+        console.log(`this.scanResults`, this.scanResults);
+    }
+
+    importProject(path) {
+
+    }
 }
