@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import styled from 'styled-components'
 import {observer} from 'mobx-react'
 import {useAppStore} from "@/renderer/core/AppStore";
+import * as _ from 'lodash'
 
 const Container = styled.div`
   display: grid;
@@ -29,7 +30,8 @@ const NameContainer = styled.div`
 `
 const PathContainer = styled.div`
   display: grid;
-  font-size: 14px;
+  font-size: 13px;
+  padding-left: 8px;
 `
 const SubdirsContainer = styled.div`
   display: flex;
@@ -42,7 +44,9 @@ const SubdirsContainer = styled.div`
     font-style: italic;
 
   }
+  padding-left: 12px;
 
+  size: 12px;
   gap: 0 10px;
   //gap: 4px;
 `
@@ -70,7 +74,7 @@ export const OpenProjectsView = observer((props: OpenProjectsViewProps) => {
         {filteredResults.map(result => {
             return <DirContainer key={result.path} onClick={() => store.importProject(result.path)}>
                 <NameContainer>{result.name} </NameContainer>
-                <PathContainer>{result.folder} ({result.path})</PathContainer>
+                <PathContainer>{_.capitalize(result.folder)} ({result.path})</PathContainer>
                 <SubdirsContainer>
                     {result.subdirs.map(subdir => {
                         return <div key={subdir} onClick={() => store.importProject(subdir)}>

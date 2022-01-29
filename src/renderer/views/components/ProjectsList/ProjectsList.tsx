@@ -108,8 +108,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                         )}
                                     >
                                         <div>
-                                            <span {...provided.dragHandleProps}> # </span>{' '}
-                                            <NameContainer>{item.name}</NameContainer>
+                                            <NameContainer {...provided.dragHandleProps}>{item.name}</NameContainer>
                                         </div>
                                         <PathContainer>{item.rootPath}</PathContainer>
                                         <PathsList item={item}/>
