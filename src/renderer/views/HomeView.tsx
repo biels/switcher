@@ -3,9 +3,11 @@ import {useAppStore} from "@/renderer/core/AppStore";
 import {observer} from "mobx-react";
 import styled from 'styled-components'
 import {ProjectsList} from "@/renderer/views/components/ProjectsList/ProjectsList";
+import {ControlToolbar} from "@/renderer/views/components/ControlToolbar";
 
 const Container = styled.div`
   display: grid;
+  grid-template-rows: auto 1fr auto;
   height: 100%;
 `
 const HomeView = observer(() => {
@@ -13,6 +15,7 @@ const HomeView = observer(() => {
     let counter = store.counter
     return (
         <Container>
+            <ControlToolbar/>
             <ProjectsList/>
             <div>
                 <button onClick={() => store.openWS([`C:\\Users\\biel\\projects\\switcher`])}>Open switcher</button>
