@@ -33,6 +33,7 @@
     "@fontsource/roboto": "^4.5.1",
     "cuid": "^2.1.8",
     "electron": "^16.0.6",
+    "electron-store": "^8.0.1",
     "encoding": "^0.1.13",
     "json5": "^2.2.0",
     "mobx": "^6.3.13",

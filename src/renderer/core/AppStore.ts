@@ -4,13 +4,16 @@ import {makeAutoObservable, makeObservable, observable} from "mobx";
 import {PowerShell} from 'node-powershell';
 import cuid from "cuid";
 import {ContextMenuStore} from "@/renderer/ContextMenu/ContextMenuStore";
-
+import * as _ from 'lodash'
+import {ProjectController} from "@/renderer/core/ProjectController";
 export let useAppStore = () => {
     return container.resolve(AppStore);
 };
 
 @singleton()
 export class AppStore {
+    registeredFolders: string[] = [];
+    projectPaths: string[] = [];
     @observable
     projects: any[] = [
         {
@@ -57,6 +60,22 @@ export class AppStore {
     async init(){
        await this.contextMenuStore.init()
     }
+
+    async loadLocalData(){
+
+    }
+    projectControllerMap = {}
+    getProjectController(projectId, initialData?: any, forceOverwrite = true) {
+        if (!_.isString(projectId)) throw new Error(`projectId is not a string`)
+        if (!projectId) throw new Error(`Tried to access ${projectId} project id`)
+        let cached = (this.projectControllerMap)[projectId];
+        if (initialData && cached && forceOverwrite) cached.data = initialData
+        if (cached) return cached;
+        let newController = new ProjectController(projectId, initialData);
+        newController.appStore = this
+        return (this.projectControllerMap)[projectId] = newController
+    }
+
     async stopWS(openAfter = true) {
         try {
             await PowerShell.$`Stop-Process -Name "webstorm64"`
