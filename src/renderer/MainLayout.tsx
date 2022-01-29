@@ -7,6 +7,8 @@ import {ExampleView1} from '@/renderer/views/ExampleView1';
 import {ExampleView2} from '@/renderer/views/ExampleView2';
 import HomeView from '@/renderer/views/HomeView';
 import {useAppStore} from "@/renderer/core/AppStore";
+import {JSONView} from "@/renderer/views/JSONView";
+import {SettingsView} from "@/renderer/views/SettingsView";
 
 const Content = styled.div`
   min-height: 100vh;
@@ -43,13 +45,15 @@ const Header = styled.div`
   color: ${props => props.theme.colors.brand1.contrast};
   padding: 4px 12px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 8px;
 `;
-
 const Body = styled.div`
   background-color: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.foreground};
   grid-area: body;
+  max-height: calc(100vh - 51px);
+  overflow-y: auto;
   //padding: 16px;
 `;
 
@@ -78,6 +82,9 @@ export default function MainLayout() {
                             <Link to="/">
                                 <div>Switcher</div>
                             </Link>
+                            <Link to="/json">
+                                <div>JSON</div>
+                            </Link>
                             <div/>
                             <Link to="/settings">
                                 <div>Settings</div>
@@ -85,9 +92,11 @@ export default function MainLayout() {
                         </Header>
                         <Body>
                             <Routes>
+                                <Route path="/json" element={<JSONView/>}/>
                                 <Route path="/example-view-1" element={<ExampleView1/>}/>
                                 <Route path="/example-view-2" element={<ExampleView2/>}/>
                                 <Route path="/" element={<HomeView/>}/>
+                                <Route path="/settings" element={<SettingsView/>}/>
                             </Routes>
                         </Body>
                         <Footer>

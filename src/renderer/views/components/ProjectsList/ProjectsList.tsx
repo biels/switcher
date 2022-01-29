@@ -112,8 +112,6 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                 )}
             </Droppable>
         </DragDropContext>
-        <pre>
-            {JSON.stringify(projects, null, 2)}
-        </pre>
+
     </Container>
 })
