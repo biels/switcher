@@ -19,6 +19,14 @@ export const SettingsView = observer((props: SettingsViewProps) => {
         <div>Registered Folders</div>
         {/*{store.registeredFolders.map(folder => <div>{folder}</div>)}*/}
         <button onClick={() => store.scanRegistredFolders()}>Scan all projects</button>
+
+        <div onClick={() => {
+            store.openConfigFile()
+        }}>{store.store.path}</div>
+        <button onClick={() => {
+            store.openConfigFile()
+        }}> Open </button>
+        <button onClick={() => store.saveLocalData()}>Save local</button>
         <pre>{json5.stringify(store.scanResults, null, 2)}</pre>
     </Container>
 })

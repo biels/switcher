@@ -8,6 +8,7 @@ configure({
     computedRequiresReaction: false,
     reactionRequiresObservable: true,
     observableRequiresReaction: false,
-    disableErrorBoundaries: true
+    disableErrorBoundaries: true,
+
 })
 render(<MainLayout />, document.getElementById("root"));

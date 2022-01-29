@@ -84,7 +84,5 @@ export class ProjectController {
         }
     }
 
-    toObj() {
-        return this.data
-    }
+
 }

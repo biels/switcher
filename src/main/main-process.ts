@@ -8,6 +8,10 @@ const IS_DEV = (ENVIRONMENT == "development"); // const injected via webpack def
 const DEV_SERVER_URL = "http://localhost:5001"; // must match webpack dev server port.
 const HTML_FILE_PATH = "renderer/index.html";
 
+const Store = require('electron-store');
+
+Store.initRenderer();
+
 function createWindow(): BrowserWindow | null {
 
     let width = 600;

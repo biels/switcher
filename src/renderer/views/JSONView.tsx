@@ -19,7 +19,7 @@ export const JSONView = observer((props: JSONViewProps) => {
     let projects = store.projects || [];
     return <Container>
         <pre>
-            {json5.stringify(projects, null, 2)}
+            {json5.stringify(projects.map(p => p.data), null, 2)}
         </pre>
     </Container>
 })

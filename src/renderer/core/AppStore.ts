@@ -12,6 +12,9 @@ import * as path from "path";
 import {ProjectController} from "@/renderer/core/ProjectController";
 
 import Store from "electron-store";
+import json5 from "json5";
+import { shell } from "electron";
+
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -72,15 +75,20 @@ export class AppStore {
     }
 
     async init() {
-        this.store = new Store();
+        this.store = new Store({
+            // serialize: v => json5.stringify(v, null, 2),
+            // deserialize: s => json5.parse(s)
+        });
         await this.contextMenuStore.init()
         // this.itemsSel = new C3Selection({
         //
         // })
-       await this.loadLocalData()
+        await this.loadLocalData()
+        window['store'] = this
     }
 
     store: Store
+
     // itemsSel: C3Selection
 
     async loadLocalData() {
@@ -90,6 +98,7 @@ export class AppStore {
         })
         // this.registeredFolders = this.store.get('registeredFolders', []) as any[]
     }
+
     async saveLocalData() {
         this.store.set('projects', this.projects.map(p => p.data))
         this.store.set('registeredFolders', this.registeredFolders)
@@ -285,5 +294,12 @@ export class AppStore {
             return true
         }
         return false
+    }
+
+    openConfigFile() {
+        let configFile = require('path').resolve(this.store.path, '..')
+        if (fs.existsSync(configFile)) {
+            PowerShell.$`explorer "${configFile}"`
+        }
     }
 }
