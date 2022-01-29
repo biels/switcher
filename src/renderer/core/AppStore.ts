@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import {container, inject, singleton} from "tsyringe";
-import {makeAutoObservable, makeObservable, observable} from "mobx";
+import {computed, makeAutoObservable, makeObservable, observable} from "mobx";
 import {PowerShell} from 'node-powershell';
 import cuid from "cuid";
 import {ContextMenuStore} from "@/renderer/ContextMenu/ContextMenuStore";
@@ -56,6 +56,7 @@ export class AppStore {
     counter = 0
 
     contextMenuStore: ContextMenuStore = new ContextMenuStore();
+    private cancelFlag: boolean = false;
 
     constructor() {
         makeObservable(this)
@@ -128,6 +129,8 @@ export class AppStore {
     elapsedMs = 0
     @observable
     totalMs = 0
+    @observable
+    statusText = ''
 
     async openWS(paths = [
         `C:\\Users\\biel\\projects\\switcher`,
@@ -150,6 +153,12 @@ export class AppStore {
             let interval = setInterval(() => {
                 this.elapsedMs += msInc
             }, msInc)
+            let resetProcess = () => {
+                clearInterval(interval)
+                this.elapsedMs = 0
+                this.totalMs = 0
+                this.statusText = ''
+            }
             if (closeOpen && (await this.getWSUsedGB()) > 1) {
                 this.totalMs += openDelay
                 await this.stopWS(false);
@@ -158,14 +167,17 @@ export class AppStore {
             await this.nextTimeout(openDelay)
 
             for (let i = 0; i < paths.length; i++) {
+                if(this.checkCanceled()) {
+                    resetProcess()
+                    return
+                }
                 let p = paths[i]
                 let r = await PowerShell.$`ws ${p}`
                 console.log(`r`, r);
                 await this.nextTimeout(delay)
             }
             this.elapsedMs = this.totalMs
-            this.totalMs = 0
-            clearInterval(interval)
+            resetProcess()
         } catch (e) {
             console.log(`e`, e);
         }
@@ -188,7 +200,7 @@ export class AppStore {
                 if (f.startsWith('.')) return false
                 if (['node_modules', 'tmp', 'dist', 'out', 'dev-dist'].includes(f)) return false
                 let joined = fs.statSync(path.join(p, f));
-                if(this.registeredFolders.find(d => d.path === joined)) return false
+                if (this.registeredFolders.find(d => d.path === joined)) return false
                 return joined.isDirectory();
             };
             let subdirs = fs.readdirSync(p).filter(filterDir(p))
@@ -212,5 +224,42 @@ export class AppStore {
 
     importProject(path) {
 
+    }
+
+    @computed
+    get canStopWorkspace() {
+        return this.usedMem > 1
+    }
+
+    @computed
+    get canStartWorkspace() {
+        return this.usedMem < 1
+    }
+
+    @computed
+    get canRestartWorkspace() {
+        return this.canStopWorkspace && this.canStartWorkspace
+    }
+
+    startWorkspace() {
+        this.openWS()
+    }
+
+    stopWorkspace() {
+        this.stopWS(false)
+    }
+
+    cancelProcess(kill = false) {
+        this.cancelFlag = true
+        if(kill) {
+            this.stopWS(false)
+        }
+    }
+    checkCanceled() {
+        if(this.cancelFlag) {
+            this.cancelFlag = false
+            return true
+        }
+        return false
     }
 }

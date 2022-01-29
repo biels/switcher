@@ -11,6 +11,7 @@ import {JSONView} from "@/renderer/views/JSONView";
 import {SettingsView} from "@/renderer/views/SettingsView";
 import {ContextMenu} from "@/renderer/ContextMenu/ContextMenu";
 import {OpenProjectsView} from "@/renderer/views/OpenProjectsView";
+import {observer} from "mobx-react";
 
 const Content = styled.div`
   min-height: 100vh;
@@ -62,11 +63,21 @@ const Body = styled.div`
 const Footer = styled.div`
   grid-area: footer;
   padding: 2px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   background-color: ${props => props.theme.colors.brand1.main};
   color: ${props => props.theme.colors.brand1.contrast};
 `;
-
-export default function MainLayout() {
+const StatusContainer = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+`
+const MemoryContainer = styled.div`
+  display: grid;
+  user-select: none;
+  
+`
+const MainLayout = observer(() => {
     let store = useAppStore()
 
     return (
@@ -106,7 +117,17 @@ export default function MainLayout() {
                             </Routes>
                         </Body>
                         <Footer>
-                            Ready {store.totalMs > 0 && <progress value={store.elapsedMs} max={store.totalMs}/>}
+                            <StatusContainer>
+                                {store.statusText} {store.totalMs > 0 &&
+                              <progress value={store.elapsedMs} max={store.totalMs}/>}
+                                {store.totalMs > 0 && <button onClick={() => {
+                                    store.cancelProcess()
+                                }}>Cancel</button>}
+                            </StatusContainer>
+                            <div/>
+                            <MemoryContainer onClick={() => store.getWSUsedGB()}>
+                                {store.usedMem.toFixed(2)} GB
+                            </MemoryContainer>
                         </Footer>
                         <ContextMenu store={store.contextMenuStore}/>
                     </Content>
@@ -114,5 +135,6 @@ export default function MainLayout() {
             </ThemeProvider>
         </Fragment>
     );
-}
+});
+export default MainLayout
 
