@@ -3,6 +3,7 @@ import {container, inject, singleton} from "tsyringe";
 import {makeAutoObservable, makeObservable, observable} from "mobx";
 import {PowerShell} from 'node-powershell';
 import cuid from "cuid";
+import {ContextMenuStore} from "@/renderer/ContextMenu/ContextMenuStore";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -46,11 +47,16 @@ export class AppStore {
     @observable
     counter = 0
 
-    constructor() {
-        makeAutoObservable(this)
-        this.startMonitoring()
-    }
+    contextMenuStore: ContextMenuStore = new ContextMenuStore();
 
+    constructor() {
+        makeObservable(this)
+        this.startMonitoring()
+        this.init()
+    }
+    async init(){
+       await this.contextMenuStore.init()
+    }
     async stopWS(openAfter = true) {
         try {
             await PowerShell.$`Stop-Process -Name "webstorm64"`

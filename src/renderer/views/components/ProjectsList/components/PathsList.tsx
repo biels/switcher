@@ -84,7 +84,7 @@ export const PathsList = observer((props: PathsListProps) => {
                                         )}
                                     >
                                         {/*<div>{item.id}</div>*/}
-                                        <div>{item.path}</div>
+                                        <div><input type={'checkbox'}/>{item.path}</div>
                                     </div>
                                 )}
                             </Draggable>

@@ -9,6 +9,7 @@ import HomeView from '@/renderer/views/HomeView';
 import {useAppStore} from "@/renderer/core/AppStore";
 import {JSONView} from "@/renderer/views/JSONView";
 import {SettingsView} from "@/renderer/views/SettingsView";
+import {ContextMenu} from "@/renderer/ContextMenu/ContextMenu";
 
 const Content = styled.div`
   min-height: 100vh;
@@ -102,6 +103,7 @@ export default function MainLayout() {
                         <Footer>
                             Ready {store.totalMs > 0 && <progress value={store.elapsedMs} max={store.totalMs}/>}
                         </Footer>
+                        <ContextMenu store={store.contextMenuStore}/>
                     </Content>
                 </HashRouter>
             </ThemeProvider>
