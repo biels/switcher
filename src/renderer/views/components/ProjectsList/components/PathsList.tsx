@@ -5,7 +5,7 @@ import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 
 const Container = styled.div`
   display: grid;
-
+  font-size: 14px;
 `
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -16,7 +16,7 @@ const reorder = (list, startIndex, endIndex) => {
     return result;
 };
 
-const grid = 8;
+const grid = 4;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -25,15 +25,18 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     margin: `0 0 ${grid}px 0`,
 
     // change background colour if dragging
-    background: isDragging ? "lightgreen" : "grey",
+    background: isDragging ? "lightgreen" : "#ddd",
+
+    borderRadius: '100px',
 
     // styles we need to apply on draggables
     ...draggableStyle
 });
 
 const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'lightgrey',
+    background: isDraggingOver ? 'lightblue' : 'white',
     display: 'flex',
+    gap: 4,
     padding: grid,
     overflow: 'auto',
 });
@@ -59,7 +62,7 @@ export const PathsList = observer((props: PathsListProps) => {
         // store.saveFeaturesDebouncer()
     }
     return <Container>
-        {props.item.paths.map(i => i.path)}
+        {/*{props.item.paths.map(i => i.path)}*/}
         <DragDropContext onDragEnd={onDragEnd} type={`${props.item.id}`}>
             <Droppable droppableId={"droppable" + props.item.id} direction="horizontal">
                 {(provided, snapshot) => (

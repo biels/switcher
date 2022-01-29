@@ -10,6 +10,16 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
 `
+const NameContainer = styled.span`
+  font-size: 15px;
+  font-weight: bold;
+
+`
+const PathContainer = styled.div`
+  font-size: 14px;
+
+
+`
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -29,7 +39,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     margin: `0 0 ${grid}px 0`,
 
     // change background colour if dragging
-    background: isDragging ? "lightgreen" : "grey",
+    background: isDragging ? "lightgreen" : "white",
 
     // styles we need to apply on draggables
     ...draggableStyle
@@ -87,11 +97,11 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                             provided.draggableProps.style
                                         )}
                                     >
-                                           <span {...provided.dragHandleProps}>
-                                            #
-                                          </span>
-                                        <div>{item.name}</div>
-                                        <div>{item.rootPath}</div>
+                                        <div>
+                                            <span {...provided.dragHandleProps}> # </span>{' '}
+                                            <NameContainer>{item.name}</NameContainer>
+                                        </div>
+                                        <PathContainer>{item.rootPath}</PathContainer>
                                         <PathsList item={item}/>
                                     </div>
                                 )}
