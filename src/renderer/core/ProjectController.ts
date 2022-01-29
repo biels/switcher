@@ -5,16 +5,17 @@ import * as fs from "fs";
 let path = require("path");
 import cuid from "cuid";
 import {makeObservable, observable} from "mobx";
+import {filterDir} from "../../utils/switcherUtils";
 
 export interface ProjectPathData {
-    id
+    id?
     path
     open: string[]
     checked: boolean
 }
 
 export interface ProjectData {
-    id
+    id?
     name
     rootPath
     paths: ProjectPathData[]
@@ -49,23 +50,33 @@ export class ProjectController {
         } else {
             data = JSON.parse(fs.readFileSync(configFile, "utf8"));
         }
-        return useAppStore().getProjectController(data.id, data)
+        let controller = useAppStore().getProjectController(data.id, data);
+        // controller.loadLocalData();
+        controller.rediscoverPaths()
+        controller.saveInProjectPath()
+        return controller
     }
 
-    rediscoverPaths(){
-        let paths = this.data.paths.map(p => p.path)
-        let newPaths = fs.readdirSync(this.data.rootPath).filter(p => fs.statSync(path.join(this.data.rootPath, p)).isDirectory()).map(p => path.join(this.data.rootPath, p))
-        let newPathsData = newPaths.map(p => ({
-            id: cuid(),
-            path: p,
-            open: [],
-            checked: true
-        }))
-        this.data.paths = [...newPathsData, ...this.data.paths.filter(p => paths.indexOf(p.path) === -1)]
-        this.saveInProjectPath()
+    rediscoverPaths() {
+        try {
+            let paths = this.data.paths.map(p => p.path)
+            let newPaths = fs.readdirSync(this.data.rootPath)
+                .filter(filterDir(this.data.rootPath))
+                .map(p => path.join(this.data.rootPath, p))
+            let newPathsData = newPaths.map(p => ({
+                id: cuid(),
+                path: path.relative(this.data.rootPath, p),
+                open: [],
+                checked: true
+            }))
+            this.data.paths = [...newPathsData, ...this.data.paths.filter(p => paths.indexOf(p.path) === -1)]
+            // this.saveInProjectPath()
+        } catch (e) {
+            console.log(`e`, e);
+        }
     }
 
-    refresh(){
+    refresh() {
         this.rediscoverPaths()
     }
 
@@ -73,6 +84,11 @@ export class ProjectController {
      * Save in the project path
      */
     saveInProjectPath() {
+        let rootPathExists = fs.existsSync(this.data.rootPath)
+        if (!rootPathExists) {
+            // fs.mkdirSync(this.data.rootPath)
+            return
+        }
         let configFile = path.join(this.data.rootPath, "project.json")
         // check if the project json file exists
         if (fs.existsSync(configFile)) {

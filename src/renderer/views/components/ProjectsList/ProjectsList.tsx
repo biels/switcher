@@ -75,7 +75,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
         );
 
         store.projects = items as any;
-        // store.saveFeaturesDebouncer()
+        store.saveLocalData()
     }
     return <Container onMouseDown={(e) => e.stopPropagation()}>
 

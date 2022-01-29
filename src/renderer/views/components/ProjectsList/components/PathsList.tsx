@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import styled from 'styled-components'
 import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
+import {useAppStore} from "@/renderer/core/AppStore";
 
 const Container = styled.div`
   display: grid;
@@ -45,6 +46,7 @@ export interface PathsListProps {
 }
 
 export const PathsList = observer((props: PathsListProps) => {
+    let store = useAppStore()
 
     let onDragEnd = function (result) {
         // dropped outside the list
@@ -59,7 +61,8 @@ export const PathsList = observer((props: PathsListProps) => {
         );
 
         props.item.paths = items
-        // store.saveFeaturesDebouncer()
+        store.saveLocalData()
+
     }
     return <Container>
         {/*{props.item.paths.map(i => i.path)}*/}

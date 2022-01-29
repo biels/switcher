@@ -13,7 +13,8 @@ import {ProjectController} from "@/renderer/core/ProjectController";
 
 import Store from "electron-store";
 import json5 from "json5";
-import { shell } from "electron";
+import {shell} from "electron";
+import {filterDir} from "../../utils/switcherUtils";
 
 
 export let useAppStore = () => {
@@ -228,13 +229,7 @@ export class AppStore {
         let directories = this.registeredFolders
         // get all first level subdirectories
         let subdirectories = directories.flatMap(d => d.path).map(p => {
-            let filterDir = p => f => {
-                if (f.startsWith('.')) return false
-                if (['node_modules', 'tmp', 'dist', 'out', 'dev-dist'].includes(f)) return false
-                let joined = fs.statSync(path.join(p, f));
-                if (this.registeredFolders.find(d => d.path === joined)) return false
-                return joined.isDirectory();
-            };
+
             let subdirs = fs.readdirSync(p).filter(filterDir(p))
             // return subdirs
             // return subdirs
@@ -255,7 +250,8 @@ export class AppStore {
     }
 
     importProject(path: string) {
-        this.projects.push(ProjectController.loadFromPath(path))
+        let existing = this.projects.find(p => p.data.rootPath === path)
+        if (!existing) this.projects.push(ProjectController.loadFromPath(path))
     }
 
     @computed
