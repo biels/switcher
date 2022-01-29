@@ -74,7 +74,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
             result.destination.index
         );
 
-        store.projects = items
+        store.projects = items as any;
         // store.saveFeaturesDebouncer()
     }
     return <Container onMouseDown={(e) => e.stopPropagation()}>
@@ -108,10 +108,10 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                         )}
                                     >
                                         <div>
-                                            <NameContainer {...provided.dragHandleProps}>{item.name}</NameContainer>
+                                            <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>
                                         </div>
-                                        <PathContainer>{item.rootPath}</PathContainer>
-                                        <PathsList item={item}/>
+                                        <PathContainer>{item.data.rootPath}</PathContainer>
+                                        <PathsList item={item.data}/>
                                     </div>
                                 )}
                             </Draggable>

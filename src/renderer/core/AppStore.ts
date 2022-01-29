@@ -11,47 +11,54 @@ import * as fs from "fs";
 import * as path from "path";
 import {ProjectController} from "@/renderer/core/ProjectController";
 
+import Store from "electron-store";
+
 export let useAppStore = () => {
     return container.resolve(AppStore);
 };
 
 @singleton()
 export class AppStore {
-    registeredFolders: { path }[] = [{path: 'C:\\Users\\biel\\projects'}, {path: 'C:\\Users\\biel\\projects\\sandbox'}, {path: 'C:\\Users\\biel\\projects\\git'}];
+    registeredFolders: { path }[] = [
+        {path: 'C:\\Users\\biel\\projects'},
+        {path: 'C:\\Users\\biel\\projects\\sandbox'},
+        {path: 'C:\\Users\\biel\\projects\\git'}
+    ];
     projectPaths: string[] = [];
     @observable
-    projects: any[] = [
-        {
-            id: cuid(),
-            name: 'Switcher',
-            rootPath: 'C:\\Users\\biel\\projects\\switcher',
-            paths: [
-                {
-                    id: cuid(),
-                    path: './switcher',
-                    open: ['terminal', 'ide'],
-                    cmd: 'yarn start'
-                }
-            ]
-        }, {
-            id: cuid(),
-            name: 'BIS',
-            rootPath: 'C:\\Users\\biel\\projects\\bis',
-            paths: [
-                {
-                    id: cuid(),
-                    path: './bis-admin',
-                    open: ['terminal', 'ide'],
-                    cmd: 'yarn dev'
-                }, {
-                    id: cuid(),
-                    path: './bis-server',
-                    open: ['terminal', 'ide'],
-                    cmd: 'yarn start:dev'
-                }
-            ]
-        },
-    ]
+    projects: ProjectController[] = []
+    //     [
+    //     {
+    //         id: cuid(),
+    //         name: 'Switcher',
+    //         rootPath: 'C:\\Users\\biel\\projects\\switcher',
+    //         paths: [
+    //             {
+    //                 id: cuid(),
+    //                 path: './switcher',
+    //                 open: ['terminal', 'ide'],
+    //                 cmd: 'yarn start'
+    //             }
+    //         ]
+    //     }, {
+    //         id: cuid(),
+    //         name: 'BIS',
+    //         rootPath: 'C:\\Users\\biel\\projects\\bis',
+    //         paths: [
+    //             {
+    //                 id: cuid(),
+    //                 path: './bis-admin',
+    //                 open: ['terminal', 'ide'],
+    //                 cmd: 'yarn dev'
+    //             }, {
+    //                 id: cuid(),
+    //                 path: './bis-server',
+    //                 open: ['terminal', 'ide'],
+    //                 cmd: 'yarn start:dev'
+    //             }
+    //         ]
+    //     },
+    // ]
     @observable
     counter = 0
 
@@ -65,11 +72,27 @@ export class AppStore {
     }
 
     async init() {
+        this.store = new Store();
         await this.contextMenuStore.init()
+        // this.itemsSel = new C3Selection({
+        //
+        // })
+       await this.loadLocalData()
     }
 
-    async loadLocalData() {
+    store: Store
+    // itemsSel: C3Selection
 
+    async loadLocalData() {
+        let projectsArr = this.store.get('projects', []) as any[];
+        this.projects = projectsArr.map(p => {
+            return this.getProjectController(p.id, p)
+        })
+        // this.registeredFolders = this.store.get('registeredFolders', []) as any[]
+    }
+    async saveLocalData() {
+        this.store.set('projects', this.projects.map(p => p.data))
+        this.store.set('registeredFolders', this.registeredFolders)
     }
 
     projectControllerMap = {}
@@ -167,7 +190,7 @@ export class AppStore {
             await this.nextTimeout(openDelay)
 
             for (let i = 0; i < paths.length; i++) {
-                if(this.checkCanceled()) {
+                if (this.checkCanceled()) {
                     resetProcess()
                     return
                 }
@@ -222,8 +245,8 @@ export class AppStore {
         console.log(`this.scanResults`, this.scanResults);
     }
 
-    importProject(path) {
-
+    importProject(path: string) {
+        this.projects.push(ProjectController.loadFromPath(path))
     }
 
     @computed
@@ -251,12 +274,13 @@ export class AppStore {
 
     cancelProcess(kill = false) {
         this.cancelFlag = true
-        if(kill) {
+        if (kill) {
             this.stopWS(false)
         }
     }
+
     checkCanceled() {
-        if(this.cancelFlag) {
+        if (this.cancelFlag) {
             this.cancelFlag = false
             return true
         }

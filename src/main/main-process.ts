@@ -29,7 +29,7 @@ function createWindow(): BrowserWindow | null {
     });
 
     if (IS_DEV) {
-        // win.webContents.openDevTools();
+        win.webContents.openDevTools();
         win.loadURL(DEV_SERVER_URL);
     }
     else {

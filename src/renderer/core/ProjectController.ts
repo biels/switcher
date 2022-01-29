@@ -2,8 +2,9 @@ import {AppStore, useAppStore} from "@/renderer/core/AppStore";
 // import fs
 import * as fs from "fs";
 // import path
-import * as path from "path";
+let path = require("path");
 import cuid from "cuid";
+import {makeObservable, observable} from "mobx";
 
 export interface ProjectPathData {
     id
@@ -21,24 +22,28 @@ export interface ProjectData {
 
 export class ProjectController {
     id
+    @observable
     data: ProjectData
+    @observable
+    localData: ProjectData
 
     constructor(projectId, initialData: any) {
         this.id = projectId
         this.data = initialData
+        makeObservable(this)
     }
 
 
     appStore: AppStore
 
-    static loadFromPath(path) {
-        let configFile = path.join(path, "project.json")
+    static loadFromPath(p) {
+        let configFile = path.join(p, "project.json")
         let data: ProjectData;
         if (!fs.existsSync(configFile)) {
             data = {
                 id: cuid(),
-                name: path.basename(path),
-                rootPath: path,
+                name: path.basename(p),
+                rootPath: p,
                 paths: []
             }
         } else {
@@ -79,4 +84,7 @@ export class ProjectController {
         }
     }
 
+    toObj() {
+        return this.data
+    }
 }
