@@ -18,6 +18,7 @@ const DirContainer = styled.div`
   padding-left: 8px;
   padding-top: 8px;
   padding-bottom: 8px;
+
   :hover {
     background-color: rgba(173, 216, 230, 0.51);
   }
@@ -41,6 +42,7 @@ const SubdirsContainer = styled.div`
     font-style: italic;
 
   }
+
   gap: 0 10px;
   //gap: 4px;
 `
@@ -54,15 +56,18 @@ export const OpenProjectsView = observer((props: OpenProjectsViewProps) => {
     useEffect(() => {
         store.scanRegistredFolders()
     }, [])
+    let filtering = store.filter
+    let filteredResults = filtering ? store.scanResults.filter(project => project.name.toLowerCase().includes(store.filter.toLowerCase())) : store.scanResults
     return <Container>
-       <TitleContainer>
-           <h3>Open Projects</h3>
-           {/*Search box*/}
-           <div>
-               <input type="text" placeholder="Search"/>
-           </div>
-       </TitleContainer>
-        {store.scanResults.map(result => {
+        <TitleContainer>
+            <h3>Open Projects ({filtering && `${filteredResults.length} / `}{store.scanResults.length})</h3>
+            {/*Search box*/}
+            <div>
+                <input type="text" placeholder="Search" value={store.filter}
+                       onChange={(e) => store.filter = e.target.value}/>
+            </div>
+        </TitleContainer>
+        {filteredResults.map(result => {
             return <DirContainer key={result.path} onClick={() => store.importProject(result.path)}>
                 <NameContainer>{result.name} </NameContainer>
                 <PathContainer>{result.folder} ({result.path})</PathContainer>

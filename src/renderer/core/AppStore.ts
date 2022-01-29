@@ -177,6 +177,8 @@ export class AppStore {
 
     @observable.ref
     scanResults = []
+    @observable
+    filter = ''
 
     scanRegistredFolders() {
         let directories = this.registeredFolders
