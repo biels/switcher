@@ -69,6 +69,8 @@ export class AppStore {
     contextMenuStore: ContextMenuStore = new ContextMenuStore();
     private cancelFlag: boolean = false;
 
+
+
     constructor() {
         makeObservable(this)
         this.startMonitoring()
@@ -116,6 +118,15 @@ export class AppStore {
         let newController = new ProjectController(projectId, initialData);
         newController.appStore = this
         return (this.projectControllerMap)[projectId] = newController
+    }
+
+    @computed
+    get selectedProjects() {
+        return this.projects.filter(project => project.data.checked)
+    }
+    @computed
+    get selectedSubpaths() {
+        return this.selectedProjects.flatMap(project => project.data.paths.filter(path => path.checked))
     }
 
     async stopWS(openAfter = true) {

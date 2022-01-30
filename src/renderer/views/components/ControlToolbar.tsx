@@ -49,8 +49,8 @@ export const ControlToolbar = observer((props: ControlToolbarProps) => {
     let store = useAppStore()
     return <Container>
         <ProgressContainer>
-            {store.totalMs > 0 ? <progress value={store.elapsedMs} max={store.totalMs}/> : <div>
-                3 selected
+            {store.totalMs > 0 ? <progress value={store.elapsedMs} max={store.totalMs}/> : <div >
+                {store.selectedSubpaths.length} selected / {store.selectedProjects.length} projects
             </div>}
             <span>{store.statusText}</span>
         </ProgressContainer>
