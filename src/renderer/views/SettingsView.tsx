@@ -16,7 +16,10 @@ export interface SettingsViewProps {
 export const SettingsView = observer((props: SettingsViewProps) => {
     let store = useAppStore()
     return <Container>
+        <div>Paths to open</div>
+        <pre>{json5.stringify(store.pathsToOpen, null, 2)}</pre>
         <div>Registered Folders</div>
+        <pre>{json5.stringify(store.registeredFolders, null, 2)}</pre>
         {/*{store.registeredFolders.map(folder => <div>{folder}</div>)}*/}
         <button onClick={() => store.scanRegistredFolders()}>Scan all projects</button>
 

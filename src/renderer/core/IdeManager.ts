@@ -70,7 +70,7 @@ export class IdeManager {
         `C:\\Users\\biel\\projects\\protocol\\pl-server`,
     ], closeOpen = true) {
 
-
+        console.log(`paths`, paths);
         try {
             // let r = await Promise.all(paths.map(p => PowerShell.$`ws ${p}`))
             // let r = PowerShell.$`ws ${paths.map(p => `"${p}"`).join(' ')}`
@@ -133,9 +133,7 @@ export class IdeManager {
     }
 
     async startWorkspace() {
-        let selectedSubpaths = this.appStore.selectedSubpaths;
-        let subpaths = selectedSubpaths.map(p => path.join(p.project.data.rootPath, p.path.path));
-        await this.openWS(subpaths, false)
+        await this.openWS(this.appStore.pathsToOpen, false)
     }
 
     stopWorkspace() {

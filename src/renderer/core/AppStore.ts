@@ -139,6 +139,11 @@ export class AppStore {
         })
     }
 
+    @computed
+    get pathsToOpen() {
+        let subpaths = this.selectedSubpaths.map(p => path.join(p.project.data.rootPath, p.path.path));
+        return subpaths
+    }
 
     @observable.ref
     scanResults = []
