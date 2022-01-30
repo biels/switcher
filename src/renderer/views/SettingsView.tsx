@@ -10,7 +10,7 @@ import * as electron from "electron";
 
 const Container = styled.div`
   display: grid;
-
+  padding-left: 12px;
 `
 
 export interface SettingsViewProps {
@@ -20,9 +20,9 @@ export interface SettingsViewProps {
 export const SettingsView = observer((props: SettingsViewProps) => {
     let store = useAppStore()
     return <Container>
-        <h3>Paths to open</h3>
+        <h3>Selected paths to open</h3>
         {store.pathsToOpen.map((path, index) => {
-            return <div key={index}
+            return <div style={{paddingLeft: 0}} key={index}
                         onContextMenu={(e) => {
                             store.contextMenuStore.menuOptions = [
                                 {
@@ -40,6 +40,7 @@ export const SettingsView = observer((props: SettingsViewProps) => {
                         }}
             >{path}</div>
         })}
+        <br/>
         {/*<pre>{json5.stringify(store.pathsToOpen, null, 2)}</pre>*/}
         <h3 onContextMenu={(e) => {
             store.contextMenuStore.menuOptions = [
@@ -74,17 +75,19 @@ export const SettingsView = observer((props: SettingsViewProps) => {
             ]
 
         }}>{folder.path}</div>)}
-        <pre>{json5.stringify(store.registeredFolders, null, 2)}</pre>
-        <button onClick={() => store.scanRegistredFolders()}>Scan all projects</button>
+        {/*<pre>{json5.stringify(store.registeredFolders, null, 2)}</pre>*/}
+        {/*<button onClick={() => store.scanRegistredFolders()}>Scan all projects</button>*/}
+        <br/>
 
+        <h3>Config file</h3>
         <div onClick={() => {
             store.openConfigFile()
         }}>{store.store.path}</div>
-        <button onClick={() => {
-            store.openConfigFile()
-        }}> Open
-        </button>
-        <button onClick={() => store.saveLocalData()}>Save local</button>
-        <pre>{json5.stringify(store.scanResults, null, 2)}</pre>
+       <div> <button onClick={() => {
+           store.openConfigFile()
+       }}> Open config directory
+       </button>
+           <button onClick={() => store.saveLocalData()}>Save config locally</button></div>
+        {/*<pre>{json5.stringify(store.scanResults, null, 2)}</pre>*/}
     </Container>
 })

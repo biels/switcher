@@ -16,7 +16,6 @@ const Container = styled.div`
 `
 const HomeView = observer(() => {
     let store = useAppStore()
-    let counter = store.counter
     return (
         <Container>
             <ControlToolbar/>

@@ -59,6 +59,8 @@ export class IdeManager {
     @observable
     totalMs = 0
     @observable
+    openedCount = 0
+    @observable
     statusText = ''
     private cancelFlag: boolean = false;
 
@@ -75,10 +77,11 @@ export class IdeManager {
             // let r = await Promise.all(paths.map(p => PowerShell.$`ws ${p}`))
             // let r = PowerShell.$`ws ${paths.map(p => `"${p}"`).join(' ')}`
             // console.log(`r`, r);
-            let delay = 5000;
+            let settings = this.appStore.settings;
+            let delay = settings.wsProjectOpenTime;
             this.elapsedMs = 0
             let msInc = 50;
-            let openDelay = 6900
+            let openDelay = settings.wsProjectOpenTime + settings.wsStartupExtraTime
             this.totalMs = delay * paths.length
             let interval = setInterval(() => {
                 this.elapsedMs += msInc
@@ -87,23 +90,26 @@ export class IdeManager {
                 clearInterval(interval)
                 this.elapsedMs = 0
                 this.totalMs = 0
+                this.openedCount = 0
                 this.statusText = ''
             }
             if (closeOpen && (await this.getWSUsedGB()) > 1) {
                 this.totalMs += openDelay
                 await this.stopWS(false);
                 await PowerShell.$`ws ${paths[0]}`
+                this.openedCount++;
             }
             await this.nextTimeout(openDelay)
 
-            for (let i = 0; i < paths.length; i++) {
+            for (let i = 1; i < paths.length; i++) {
                 if (this.checkCanceled()) {
                     resetProcess()
                     return
                 }
                 let p = paths[i]
                 let r = await PowerShell.$`ws ${p}`
-                console.log(`r`, r);
+                this.openedCount++;
+                // console.log(`r`, r);
                 await this.nextTimeout(delay)
             }
             this.elapsedMs = this.totalMs

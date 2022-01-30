@@ -65,7 +65,10 @@ export class AppStore {
     //     },
     // ]
     @observable
-    counter = 0
+    settings = {
+        wsStartupExtraTime: 4000,
+        wsProjectOpenTime: 5500,
+    }
 
     contextMenuStore: ContextMenuStore = new ContextMenuStore();
 
