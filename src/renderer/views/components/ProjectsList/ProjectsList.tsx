@@ -4,7 +4,7 @@ import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {PathsList} from "@/renderer/views/components/ProjectsList/components/PathsList";
-import {MdDelete, MdDeleteOutline, MdOutlineSelectAll, MdPlayArrow} from "react-icons/md";
+import {MdDelete, MdDeleteOutline, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow} from "react-icons/md";
 import {GrCheckboxSelected} from "react-icons/gr";
 import {useNavigate} from "react-router-dom";
 
@@ -123,6 +123,11 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                         navigate(`/`)
 
                                                     }, hotKey: 'Delete'
+                                                },
+                                                {
+                                                    name: `Open In Explorer`, icon: <MdOpenInNew/>, onClick: () => {
+                                                        projectC.openInExplorer();
+                                                    }, hotKey: 'Ctrl + Enter'
                                                 },
                                             ]
 

@@ -107,4 +107,15 @@ export class ProjectController {
         this.appStore.saveLocalData()
 
     }
+
+    openInExplorer() {
+        let path = this.data.rootPath
+        if (process.platform === "darwin") {
+            require("child_process").exec(`open ${path}`)
+        } else if (process.platform === "win32") {
+            require("child_process").exec(`start ${path}`)
+        } else {
+            require("child_process").exec(`xdg-open ${path}`)
+        }
+    }
 }
