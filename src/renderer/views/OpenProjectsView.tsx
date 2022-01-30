@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {observer} from 'mobx-react'
 import {useAppStore} from "@/renderer/core/AppStore";
 import * as _ from 'lodash'
+import {useNavigate} from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
@@ -62,6 +63,9 @@ export const OpenProjectsView = observer((props: OpenProjectsViewProps) => {
     }, [])
     let filtering = store.filter
     let filteredResults = filtering ? store.scanResults.filter(project => project.name.toLowerCase().includes(store.filter.toLowerCase())) : store.scanResults
+
+    let navigate = useNavigate()
+
     return <Container>
         <TitleContainer>
             <h3>Open Projects ({filtering && `${filteredResults.length} / `}{store.scanResults.length})</h3>
@@ -72,12 +76,17 @@ export const OpenProjectsView = observer((props: OpenProjectsViewProps) => {
             </div>
         </TitleContainer>
         {filteredResults.map(result => {
-            return <DirContainer key={result.path} onClick={() => store.importProject(result.path)}>
+            return <DirContainer key={result.path} onClick={() => {
+                store.importProject(result.path);
+                navigate('/')
+            }}>
                 <NameContainer>{result.name} </NameContainer>
                 <PathContainer>{_.capitalize(result.folder)} ({result.path})</PathContainer>
                 <SubdirsContainer>
                     {result.subdirs.map(subdir => {
-                        return <div key={subdir} onClick={() => store.importProject(subdir)}>
+                        return <div key={subdir} onClick={() => {
+
+                        }}>
                             {subdir}
                         </div>
                     })}

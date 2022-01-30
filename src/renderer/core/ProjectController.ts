@@ -101,4 +101,10 @@ export class ProjectController {
     }
 
 
+    delete() {
+        this.appStore.projects.splice(this.appStore.projects.indexOf(this), 1)
+        delete this.appStore.projectControllerMap[this.id]
+        this.appStore.saveLocalData()
+
+    }
 }

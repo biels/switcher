@@ -13,8 +13,8 @@ import {ProjectController} from "@/renderer/core/ProjectController";
 
 import Store from "electron-store";
 import json5 from "json5";
-import {shell} from "electron";
 import {filterDir} from "../../utils/switcherUtils";
+import * as electron from "electron";
 
 
 export let useAppStore = () => {
@@ -107,7 +107,7 @@ export class AppStore {
 
     projectControllerMap = {}
 
-    getProjectController(projectId, initialData?: any, forceOverwrite = true) {
+    getProjectController(projectId, initialData?: any, forceOverwrite = true): ProjectController {
         if (!_.isString(projectId)) throw new Error(`projectId is not a string`)
         if (!projectId) throw new Error(`Tried to access ${projectId} project id`)
         let cached = (this.projectControllerMap)[projectId];
@@ -144,17 +144,16 @@ export class AppStore {
         }
     }
 
-    monitInterval = null
 
     async startMonitoring() {
         let ms = 2200;
-        if (!this.monitInterval) this.monitInterval = setInterval(() => {
+        if (!window['monitInterval']) window['monitInterval'] = setInterval(() => {
             this.getWSUsedGB()
         }, ms)
     }
 
     async stopMonitoring() {
-        clearInterval(this.monitInterval)
+        clearInterval(window['monitInterval'])
     }
 
 
@@ -251,7 +250,7 @@ export class AppStore {
 
     importProject(path: string) {
         let existing = this.projects.find(p => p.data.rootPath === path)
-        if (!existing) this.projects.push(ProjectController.loadFromPath(path))
+        if (!existing) this.projects.unshift(ProjectController.loadFromPath(path))
     }
 
     @computed
@@ -297,5 +296,12 @@ export class AppStore {
         if (fs.existsSync(configFile)) {
             PowerShell.$`explorer "${configFile}"`
         }
+    }
+
+    /**
+     * Open dev tools in electron from renderer process
+     */
+    openDevTools() {
+
     }
 }

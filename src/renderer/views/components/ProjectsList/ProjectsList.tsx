@@ -4,8 +4,9 @@ import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {PathsList} from "@/renderer/views/components/ProjectsList/components/PathsList";
-import {MdDeleteOutline, MdOutlineSelectAll, MdPlayArrow} from "react-icons/md";
+import {MdDelete, MdDeleteOutline, MdOutlineSelectAll, MdPlayArrow} from "react-icons/md";
 import {GrCheckboxSelected} from "react-icons/gr";
+import {useNavigate} from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
@@ -77,6 +78,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
         store.projects = items as any;
         store.saveLocalData()
     }
+    let navigate = useNavigate()
     return <Container onMouseDown={(e) => e.stopPropagation()}>
 
         <DragDropContext onDragEnd={onDragEnd}>
@@ -86,14 +88,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         style={getListStyle(snapshot.isDraggingOver)}
-                        onContextMenu={(e) => {
-                            store.contextMenuStore.menuOptions = [
-                                {name: `Start`, icon: <MdPlayArrow/>, onClick: () => null, hotKey: 'Enter'},
-                                {name: `Select All`, icon: <MdOutlineSelectAll/>, onClick: () => null, hotKey: 'Ctrl + Enter'},
-                                {name: `Select Only`, icon: <GrCheckboxSelected/>, onClick: () => null},
-                            ]
 
-                        }}
                     >
                         {projects.map((item, index) => (
                             <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
@@ -106,6 +101,32 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                             snapshot.isDragging,
                                             provided.draggableProps.style
                                         )}
+                                        onContextMenu={(e) => {
+                                            let projectC = store.getProjectController(item.id)
+                                            store.contextMenuStore.menuOptions = [
+                                                {
+                                                    name: `Start`,
+                                                    icon: <MdPlayArrow/>,
+                                                    onClick: () => null,
+                                                    hotKey: 'Enter'
+                                                },
+                                                {
+                                                    name: `Select All`,
+                                                    icon: <MdOutlineSelectAll/>,
+                                                    onClick: () => null,
+                                                    hotKey: 'Ctrl + Enter'
+                                                },
+                                                {name: `Select Only`, icon: <GrCheckboxSelected/>, onClick: () => null},
+                                                {
+                                                    name: `Delete`, icon: <MdDelete/>, onClick: () => {
+                                                        projectC.delete();
+                                                        navigate(`/`)
+
+                                                    }, hotKey: 'Delete'
+                                                },
+                                            ]
+
+                                        }}
                                     >
                                         <div>
                                             <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>

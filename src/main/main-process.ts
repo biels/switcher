@@ -22,7 +22,7 @@ function createWindow(): BrowserWindow | null {
         // bottom right corner of screen.
         x: screen.getPrimaryDisplay().bounds.width - width,
         y: screen.getPrimaryDisplay().bounds.height - height,
-        maximizable: false,
+        maximizable: true,
 
         webPreferences: {
             nodeIntegration: true,
