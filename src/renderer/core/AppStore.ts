@@ -24,12 +24,12 @@ export let useAppStore = () => {
 
 @singleton()
 export class AppStore {
+    @observable
     registeredFolders: { path }[] = [
         {path: 'C:\\Users\\biel\\projects'},
         {path: 'C:\\Users\\biel\\projects\\sandbox'},
         {path: 'C:\\Users\\biel\\projects\\git'}
     ];
-    projectPaths: string[] = [];
     @observable
     projects: ProjectController[] = []
     //     [
@@ -192,5 +192,16 @@ export class AppStore {
      */
     openDevTools() {
 
+    }
+
+    removeRegisteredFolder(folder: { path }) {
+        let index = this.registeredFolders.findIndex(f => f.path === folder.path)
+        if (index > -1) this.registeredFolders.splice(index, 1)
+    }
+
+    addRegisteredFolder(path: string) {
+        this.registeredFolders.push({
+            path: path
+        })
     }
 }

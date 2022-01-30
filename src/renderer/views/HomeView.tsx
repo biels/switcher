@@ -21,22 +21,22 @@ const HomeView = observer(() => {
         <Container>
             <ControlToolbar/>
             <ProjectsList/>
-            <div>
-                <button onClick={() => store.ideManager.openWS([`C:\\Users\\biel\\projects\\switcher`])}>Open switcher</button>
-                <button onClick={() => store.ideManager.openWS([`C:\\Users\\biel\\projects\\switcher`], false)}>Open switcher no
-                    close
-                </button>
-                <button onClick={() => store.ideManager.openWS()}>Open all</button>
-                <button onClick={() => store.ideManager.stopWS(false)}>Close WS</button>
-                <div>
+            {/*<div>*/}
+            {/*    <button onClick={() => store.ideManager.openWS([`C:\\Users\\biel\\projects\\switcher`])}>Open switcher</button>*/}
+            {/*    <button onClick={() => store.ideManager.openWS([`C:\\Users\\biel\\projects\\switcher`], false)}>Open switcher no*/}
+            {/*        close*/}
+            {/*    </button>*/}
+            {/*    <button onClick={() => store.ideManager.openWS()}>Open all</button>*/}
+            {/*    <button onClick={() => store.ideManager.stopWS(false)}>Close WS</button>*/}
+            {/*    <div>*/}
 
 
-                </div>
-                <div>
-                    <button onClick={() => store.ideManager.getWSUsedGB()}>Get used memory</button>
-                    <div>{store.ideManager.usedMem.toFixed(2)} GB</div>
-                </div>
-            </div>
+            {/*    </div>*/}
+            {/*    <div>*/}
+            {/*        <button onClick={() => store.ideManager.getWSUsedGB()}>Get used memory</button>*/}
+            {/*        <div>{store.ideManager.usedMem.toFixed(2)} GB</div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </Container>
     );
 });
