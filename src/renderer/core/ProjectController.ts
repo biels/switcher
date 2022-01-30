@@ -4,8 +4,8 @@ import * as fs from "fs";
 // import path
 let path = require("path");
 import cuid from "cuid";
-import {makeObservable, observable} from "mobx";
-import {filterDir} from "../../utils/switcherUtils";
+import {makeObservable, observable, runInAction} from "mobx";
+import {filterDir, openPathInExplorer} from "../../utils/switcherUtils";
 
 export interface ProjectPathData {
     id?
@@ -110,12 +110,26 @@ export class ProjectController {
 
     openInExplorer() {
         let path = this.data.rootPath
-        if (process.platform === "darwin") {
-            require("child_process").exec(`open ${path}`)
-        } else if (process.platform === "win32") {
-            require("child_process").exec(`start ${path}`)
-        } else {
-            require("child_process").exec(`xdg-open ${path}`)
-        }
+        openPathInExplorer(path)
+    }
+
+    select(subpaths: string[] | null, value: boolean | null = true) {
+        console.log(`subpaths`, subpaths);
+        this.data.paths.forEach(p => {
+            if (!subpaths || subpaths.includes(p.path)) {
+                if (value === null) {
+                    p.checked = !p.checked
+                } else {
+                    p.checked = value
+                }
+            }
+        })
+        this.saveInProjectPath()
+        this.appStore.saveLocalData()
+
+    }
+
+    selectAll(value: boolean | null = true) {
+        this.select(null, value)
     }
 }

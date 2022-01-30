@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
+import {useNavigate} from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
@@ -41,12 +42,14 @@ const getListStyle = isDraggingOver => ({
     padding: grid,
     overflow: 'auto',
 });
+
 export interface PathsListProps {
     item
 }
 
 export const PathsList = observer((props: PathsListProps) => {
     let store = useAppStore()
+    let projectC = store.getProjectController(props.item.id)
 
     let onDragEnd = function (result) {
         // dropped outside the list
@@ -64,6 +67,8 @@ export const PathsList = observer((props: PathsListProps) => {
         store.saveLocalData()
 
     }
+    let navigate = useNavigate()
+    console.log(`projectC.data.paths`, projectC.data.paths);
     return <Container>
         {/*{props.item.paths.map(i => i.path)}*/}
         <DragDropContext onDragEnd={onDragEnd} type={`${props.item.id}`}>
@@ -74,8 +79,8 @@ export const PathsList = observer((props: PathsListProps) => {
                         ref={provided.innerRef}
                         style={getListStyle(snapshot.isDraggingOver)}
                     >
-                        {props.item.paths.map((item, index) => (
-                            <Draggable key={item.id} draggableId={item.id.toString()} index={index} >
+                        {projectC.data.paths.map((path, index) => (
+                            <Draggable key={path.id} draggableId={path.id.toString()} index={index}>
                                 {(provided, snapshot) => (
                                     <div
                                         ref={provided.innerRef}
@@ -86,8 +91,23 @@ export const PathsList = observer((props: PathsListProps) => {
                                             provided.draggableProps.style
                                         )}
                                     >
-                                        {/*<div>{item.id}</div>*/}
-                                        <div><input type={'checkbox'}/>{item.path}</div>
+                                        {/*<div>{path.checked}</div>*/}
+
+                                        <div
+                                            onClick={(e) => {
+                                                projectC.select([path.path], null);
+                                                navigate('/')
+                                            }}>
+
+                                        <input type={'checkbox'}
+                                                    checked={path.checked}
+                                                onChange={(e) => {
+                                                    projectC.select([path.path], e.target.checked);
+                                                    navigate('/')
+                                                }}/>
+
+                                            {path.path}
+                                        </div>
                                     </div>
                                 )}
                             </Draggable>

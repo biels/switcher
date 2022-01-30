@@ -4,7 +4,7 @@ import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {PathsList} from "@/renderer/views/components/ProjectsList/components/PathsList";
-import {MdDelete, MdDeleteOutline, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow} from "react-icons/md";
+import {MdDelete, MdDeleteOutline, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow, MdRefresh} from "react-icons/md";
 import {GrCheckboxSelected} from "react-icons/gr";
 import {useNavigate} from "react-router-dom";
 
@@ -107,13 +107,13 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                 {
                                                     name: `Start`,
                                                     icon: <MdPlayArrow/>,
-                                                    onClick: () => null,
+                                                    onClick:  () => projectC.selectAll(),
                                                     hotKey: 'Enter'
                                                 },
                                                 {
                                                     name: `Select All`,
                                                     icon: <MdOutlineSelectAll/>,
-                                                    onClick: () => null,
+                                                    onClick: () => projectC.selectAll(),
                                                     hotKey: 'Ctrl + Enter'
                                                 },
                                                 {name: `Select Only`, icon: <GrCheckboxSelected/>, onClick: () => null},
@@ -128,6 +128,10 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                     name: `Open In Explorer`, icon: <MdOpenInNew/>, onClick: () => {
                                                         projectC.openInExplorer();
                                                     }, hotKey: 'Ctrl + Enter'
+                                                }, {
+                                                    name: `Refresh`, icon: <MdRefresh/>, onClick: () => {
+                                                        projectC.refresh();
+                                                    },
                                                 },
                                             ]
 

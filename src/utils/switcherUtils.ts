@@ -9,3 +9,14 @@ export let filterDir = p => f => {
     if (useAppStore().registeredFolders.find(d => d.path === joined)) return false
     return joined.isDirectory();
 };
+
+
+export let openPathInExplorer = (path: string) => {
+    if (process.platform === 'darwin') {
+        require('child_process').exec(`open ${path}`);
+    } else if (process.platform === 'win32') {
+        require('child_process').exec(`start ${path}`);
+    } else {
+        require('child_process').exec(`xdg-open ${path}`);
+    }
+};
