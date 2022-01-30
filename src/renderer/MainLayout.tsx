@@ -118,15 +118,15 @@ const MainLayout = observer(() => {
                         </Body>
                         <Footer>
                             <StatusContainer>
-                                {store.statusText} {store.totalMs > 0 &&
-                              <progress value={store.elapsedMs} max={store.totalMs}/>}
-                                {store.totalMs > 0 && <button onClick={() => {
-                                    store.cancelProcess()
+                                {store.ideManager.statusText} {store.ideManager.totalMs > 0 &&
+                              <progress value={store.ideManager.elapsedMs} max={store.ideManager.totalMs}/>}
+                                {store.ideManager.totalMs > 0 && <button onClick={() => {
+                                    store.ideManager.cancelProcess()
                                 }}>Cancel</button>}
                             </StatusContainer>
                             <div/>
-                            <MemoryContainer onClick={() => store.getWSUsedGB()}>
-                                {store.usedMem.toFixed(2)} GB
+                            <MemoryContainer onClick={() => store.ideManager.getWSUsedGB()}>
+                                {store.ideManager.usedMem.toFixed(2)} GB
                             </MemoryContainer>
                         </Footer>
                         <ContextMenu store={store.contextMenuStore}/>
