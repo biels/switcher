@@ -95,11 +95,13 @@ export const PathsList = observer((props: PathsListProps) => {
 
                                         <div
                                             onClick={(e) => {
+                                                e.stopPropagation()
                                                 projectC.select([path.path], null);
                                                 navigate('/')
                                             }}>
 
                                         <input type={'checkbox'}
+                                               disabled={!projectC.data.checked}
                                                     checked={path.checked}
                                                 onChange={(e) => {
                                                     projectC.select([path.path], e.target.checked);

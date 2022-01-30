@@ -9,6 +9,10 @@ const Container = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 `
 const HomeView = observer(() => {
     let store = useAppStore()

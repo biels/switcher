@@ -43,7 +43,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 
     // change background colour if dragging
     background: isDragging ? "lightgreen" : "white",
-
+    width: 'calc(100% - 48px)',
     // styles we need to apply on draggables
     ...draggableStyle
 });
@@ -90,62 +90,76 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                         style={getListStyle(snapshot.isDraggingOver)}
 
                     >
-                        {projects.map((item, index) => (
-                            <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
-                                {(provided, snapshot) => (
-                                    <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
+                        {projects.map((item, index) => {
+                            let projectC = store.getProjectController(item.id)
+                            return (
+                                <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
 
-                                        style={getItemStyle(
-                                            snapshot.isDragging,
-                                            provided.draggableProps.style
-                                        )}
-                                        onContextMenu={(e) => {
-                                            let projectC = store.getProjectController(item.id)
-                                            store.contextMenuStore.menuOptions = [
-                                                {
-                                                    name: `Start`,
-                                                    icon: <MdPlayArrow/>,
-                                                    onClick:  () => projectC.selectAll(),
-                                                    hotKey: 'Enter'
-                                                },
-                                                {
-                                                    name: `Select All`,
-                                                    icon: <MdOutlineSelectAll/>,
-                                                    onClick: () => projectC.selectAll(),
-                                                    hotKey: 'Ctrl + Enter'
-                                                },
-                                                {name: `Select Only`, icon: <GrCheckboxSelected/>, onClick: () => null},
-                                                {
-                                                    name: `Delete`, icon: <MdDelete/>, onClick: () => {
-                                                        projectC.delete();
-                                                        navigate(`/`)
-
-                                                    }, hotKey: 'Delete'
-                                                },
-                                                {
-                                                    name: `Open In Explorer`, icon: <MdOpenInNew/>, onClick: () => {
-                                                        projectC.openInExplorer();
-                                                    }, hotKey: 'Ctrl + Enter'
-                                                }, {
-                                                    name: `Refresh`, icon: <MdRefresh/>, onClick: () => {
-                                                        projectC.refresh();
+                                            style={getItemStyle(
+                                                snapshot.isDragging,
+                                                provided.draggableProps.style
+                                            )}
+                                            onContextMenu={(e) => {
+                                                store.contextMenuStore.menuOptions = [
+                                                    {
+                                                        name: `Start`,
+                                                        icon: <MdPlayArrow/>,
+                                                        onClick: () => projectC.selectAll(),
+                                                        hotKey: 'Enter'
                                                     },
-                                                },
-                                            ]
+                                                    {
+                                                        name: `Select All`,
+                                                        icon: <MdOutlineSelectAll/>,
+                                                        onClick: () => {
+                                                            projectC.selectAll(true);
+                                                            navigate(`/`)
+                                                        },
+                                                        hotKey: 'Ctrl + Enter'
+                                                    },
+                                                    {
+                                                        name: `Select Only`,
+                                                        icon: <GrCheckboxSelected/>,
+                                                        onClick: () => null
+                                                    },
+                                                    {
+                                                        name: `Delete`, icon: <MdDelete/>, onClick: () => {
+                                                            projectC.delete();
+                                                            navigate(`/`)
 
-                                        }}
-                                    >
-                                        <div>
-                                            <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>
+                                                        }, hotKey: 'Delete'
+                                                    },
+                                                    {
+                                                        name: `Open In Explorer`, icon: <MdOpenInNew/>, onClick: () => {
+                                                            projectC.openInExplorer();
+                                                        }, hotKey: 'Ctrl + Enter'
+                                                    }, {
+                                                        name: `Refresh`, icon: <MdRefresh/>, onClick: () => {
+                                                            projectC.refresh();
+                                                        },
+                                                    },
+                                                ]
+
+                                            }}
+                                            onClick={() => {
+                                                projectC.setChecked(!projectC.data.checked);
+                                                navigate('/')
+                                            }}
+                                        >
+                                            <div>
+                                                {projectC.data.checked ? '>' : ''}
+                                                <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>
+                                            </div>
+                                            <PathContainer>{item.data.rootPath}</PathContainer>
+                                            <PathsList item={item.data}/>
                                         </div>
-                                        <PathContainer>{item.data.rootPath}</PathContainer>
-                                        <PathsList item={item.data}/>
-                                    </div>
-                                )}
-                            </Draggable>
-                        ))}
+                                    )}
+                                </Draggable>
+                            );
+                        })}
                         {provided.placeholder}
                     </div>
                 )}

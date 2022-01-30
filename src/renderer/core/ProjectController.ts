@@ -18,6 +18,7 @@ export interface ProjectData {
     id?
     name
     rootPath
+    checked: boolean;
     paths: ProjectPathData[]
 }
 
@@ -45,6 +46,7 @@ export class ProjectController {
                 id: cuid(),
                 name: path.basename(p),
                 rootPath: p,
+                checked: true,
                 paths: []
             }
         } else {
@@ -131,5 +133,11 @@ export class ProjectController {
 
     selectAll(value: boolean | null = true) {
         this.select(null, value)
+    }
+
+    setChecked(value: boolean | null = true) {
+        this.data.checked = value
+        this.saveInProjectPath()
+        this.appStore.saveLocalData()
     }
 }
