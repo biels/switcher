@@ -49,16 +49,16 @@ export const ControlToolbar = observer((props: ControlToolbarProps) => {
     let store = useAppStore()
     return <Container>
         <ProgressContainer>
-            {store.totalMs > 0 ? <progress value={store.elapsedMs} max={store.totalMs}/> : <div >
+            {store.ideManager.totalMs > 0 ? <progress value={store.ideManager.elapsedMs} max={store.ideManager.totalMs}/> : <div >
                 {store.selectedSubpaths.length} selected / {store.selectedProjects.length} projects
             </div>}
-            <span>{store.statusText}</span>
+            <span>{store.ideManager.statusText}</span>
         </ProgressContainer>
         <ButtonsContainer>
-            <ButtonContainer onClick={() => store.startWorkspace()}>
-                {store.canRestartWorkspace ? <MdPlayArrow/> : <MdRestartAlt/>}
+            <ButtonContainer onClick={() => store.ideManager.startWorkspace()}>
+                {store.ideManager.canRestartWorkspace ? <MdPlayArrow/> : <MdRestartAlt/>}
             </ButtonContainer>
-            <ButtonContainer onClick={() => store.stopWorkspace()}>
+            <ButtonContainer onClick={() => store.ideManager.stopWorkspace()}>
                 <MdStop/>
             </ButtonContainer>
         </ButtonsContainer>

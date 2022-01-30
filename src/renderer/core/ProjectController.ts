@@ -71,6 +71,12 @@ export class ProjectController {
                 open: [],
                 checked: true
             }))
+            newPathsData.push({
+                id: cuid(),
+                path: '.',
+                open: [],
+                checked: newPathsData.length == 0
+            })
             this.data.paths = [...newPathsData, ...this.data.paths.filter(p => paths.indexOf(p.path) === -1)]
             // this.saveInProjectPath()
         } catch (e) {

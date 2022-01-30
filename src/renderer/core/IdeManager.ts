@@ -1,6 +1,7 @@
 import {AppStore} from "@/renderer/core/AppStore";
 import {PowerShell} from "node-powershell";
 import {computed, makeObservable, observable} from "mobx";
+import path from "path";
 
 export class IdeManager {
     appStore: AppStore;
@@ -131,8 +132,10 @@ export class IdeManager {
         return this.canStopWorkspace && this.canStartWorkspace
     }
 
-    startWorkspace() {
-        this.openWS()
+    async startWorkspace() {
+        let selectedSubpaths = this.appStore.selectedSubpaths;
+        let subpaths = selectedSubpaths.map(p => path.join(p.project.data.rootPath, p.path.path));
+        await this.openWS(subpaths, false)
     }
 
     stopWorkspace() {

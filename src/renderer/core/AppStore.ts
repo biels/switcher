@@ -129,7 +129,14 @@ export class AppStore {
 
     @computed
     get selectedSubpaths() {
-        return this.selectedProjects.flatMap(project => project.data.paths.filter(path => path.checked))
+        return this.selectedProjects.flatMap(project => {
+            return project.data.paths.filter(path => path.checked).map(path => {
+                return {
+                    project: project,
+                    path: path
+                }
+            })
+        })
     }
 
 
@@ -166,7 +173,6 @@ export class AppStore {
         let existing = this.projects.find(p => p.data.rootPath === path)
         if (!existing) this.projects.unshift(ProjectController.loadFromPath(path))
     }
-
 
 
     openConfigFile() {
