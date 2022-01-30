@@ -1,23 +1,21 @@
 {
-  "name": "electron-react-typescript-boilerplate",
-  "version": "3.0.0",
-  "description": "Template project for desktop apps using Electron, React and Typescript",
-  "author": "Marcelo Augusto",
+  "name": "switcher",
+  "version": "1.0.0",
+  "description": "Switch between development environments",
+  "author": "Biel Simon",
   "license": "MIT",
   "keywords": [
-    "electron",
-    "react",
-    "typescript",
-    "hot",
-    "reload"
+    "ide",
+    "automation",
+    "typescript"
   ],
-  "homepage": "https://github.com/marceloaugusto80/electron-react-typescript-boilerplate",
+  "homepage": "https://github.com/biels/switcher",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marceloaugusto80/electron-react-typescript-boilerplate.git"
+    "url": "git+https://github.com/biels/switcher.git"
   },
   "bugs": {
-    "url": "https://github.com/marceloaugusto80/electron-react-typescript-boilerplate/issues"
+    "url": "https://github.com/biels/switcher/issues"
   },
   "main": "main-process.js",
   "scripts": {
@@ -26,7 +24,27 @@
     "build:prod": "npx webpack --env production",
     "start": "npx concurrently \"npx webpack serve --config-name renderer --env hot-reload\" \"npx webpack --config-name main && npx electron ./dist/main-process.js\" --kill-others --kill-others-on-fail",
     "start:prod": "npm run build:prod && npx electron ./dist/main-process.js",
-    "pack": "npx rimraf ./pack && npm run build:prod && npx electron-packager ./dist --out ./pack --overwrite"
+    "pack-old": "npx rimraf ./pack && npm run build:prod && npx electron-packager ./dist --out ./pack --overwrite",
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --config electron-builder.yml"
+
+  },
+  "build": {
+    "appId": "com.biel.switcher",
+    "productName": "Switcher",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "mac": {
+      "category": "tools.ide"
+    }
   },
   "dependencies": {
     "@electron/remote": "^2.0.1",
