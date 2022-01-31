@@ -64,6 +64,8 @@ export class IdeManager {
     @observable
     openedCount = 0
     @observable
+    openTotalCount = 0
+    @observable
     statusText = ''
     private cancelFlag: boolean = false;
 
@@ -81,6 +83,7 @@ export class IdeManager {
             let interval = setInterval(() => {
                 this.elapsedMs += msInc
             }, msInc)
+            this.openTotalCount = paths.length
             let resetProcess = () => {
                 clearInterval(interval)
                 this.elapsedMs = 0
