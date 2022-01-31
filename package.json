@@ -25,8 +25,7 @@
     "start": "npx concurrently \"npx webpack serve --config-name renderer --env hot-reload\" \"npx webpack --config-name main && npx electron ./dist/main-process.js\" --kill-others --kill-others-on-fail",
     "start:prod": "npm run build:prod && npx electron ./dist/main-process.js",
     "pack": "npx rimraf ./pack && npm run build:prod && npx electron-packager ./dist --out ./pack --overwrite",
-    "postinstall": "electron-builder install-app-deps",
-    "dist": "electron-builder"
+    "dist": "yarn build:prod && electron-builder -w --publish never"
   },
   "dependencies": {
     "@electron/remote": "^2.0.1",
