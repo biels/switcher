@@ -108,7 +108,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                     {
                                                         name: `Start`,
                                                         icon: <MdPlayArrow/>,
-                                                        onClick: () => store.ideManager.openWS([store.ideManager]),
+                                                        onClick: () => projectC.start(false),
                                                         hotKey: 'Enter'
                                                     },
                                                     {
