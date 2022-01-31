@@ -26,9 +26,9 @@ export let useAppStore = () => {
 export class AppStore {
     @observable
     registeredFolders: { path }[] = [
-        {path: 'C:\\Users\\biel\\projects'},
-        {path: 'C:\\Users\\biel\\projects\\sandbox'},
-        {path: 'C:\\Users\\biel\\projects\\git'}
+        // {path: 'C:\\Users\\biel\\projects'},
+        // {path: 'C:\\Users\\biel\\projects\\sandbox'},
+        // {path: 'C:\\Users\\biel\\projects\\git'}
     ];
     @observable
     projects: ProjectController[] = []
@@ -68,6 +68,8 @@ export class AppStore {
     settings = {
         wsStartupExtraTime: 4000,
         wsProjectOpenTime: 5500,
+        wsCommandName: 'webstorm'
+
     }
 
     contextMenuStore: ContextMenuStore = new ContextMenuStore();
@@ -101,6 +103,7 @@ export class AppStore {
 
     async loadLocalData() {
         let projectsArr = this.store.get('projects', []) as any[];
+        this.settings = this.store.get('settings', this.settings) as any;
         this.projects = projectsArr.map(p => {
             return this.getProjectController(p.id, p)
         })
@@ -109,6 +112,7 @@ export class AppStore {
 
     async saveLocalData() {
         this.store.set('projects', this.projects.map(p => p.data))
+        this.store.set('settings', this.settings)
         this.store.set('registeredFolders', this.registeredFolders)
     }
 
