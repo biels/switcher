@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {observer} from 'mobx-react'
 import {MdDeleteOutline, MdOutlineSelectAll, MdPlayArrow, MdRestartAlt, MdStop} from "react-icons/md";
 import {useAppStore} from "@/renderer/core/AppStore";
+import path from "path";
 
 const Container = styled.div`
   display: grid;
@@ -47,10 +48,13 @@ export interface ControlToolbarProps {
  */
 export const ControlToolbar = observer((props: ControlToolbarProps) => {
     let store = useAppStore()
+    let pathStr = store.ideManager.openingSubpath.split(path.sep);
+    let displayPath = pathStr.splice(pathStr.length - 2, 2)
     return <Container>
         <ProgressContainer>
             {store.ideManager.totalMs > 0 ?
-                <div>Opening {store.ideManager.openedCount + 1} / {store.ideManager.openTotalCount}</div> : <div>
+                <div>Opening {store.ideManager.openedCount + 1} / {store.ideManager.openTotalCount} ({displayPath.join('/')})</div> :
+                <div>
                     {store.selectedSubpaths.length} selected / {store.selectedProjects.length} projects
                 </div>}
             <span>{store.ideManager.statusText}</span>

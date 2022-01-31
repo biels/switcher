@@ -72,6 +72,9 @@ export class IdeManager {
     openTotalCount = 0
     @observable
     statusText = ''
+    @observable
+    openingSubpath = ''
+
     private cancelFlag: boolean = false;
 
     async openWSPath(p) {
@@ -99,6 +102,7 @@ export class IdeManager {
                 this.totalMs = 0
                 this.openedCount = 0
                 this.statusText = ''
+                this.openingSubpath = ''
             }
             let initialI = 0;
             if (closeOpen && (await this.getWSUsedGB()) > 1) {
@@ -106,8 +110,10 @@ export class IdeManager {
             }
             await this.getWSUsedGB()
             if (!this.wsRunning) {
-                let r = this.openWSPath(paths[0])
+                let subpath = paths[0];
+                let r = this.openWSPath(subpath)
                 this.totalMs += openDelay
+                this.openingSubpath = subpath
                 this.openedCount++;
                 initialI++;
             }
@@ -120,11 +126,13 @@ export class IdeManager {
                 }
                 let p = paths[i]
                 let r = this.openWSPath(p)
+                this.openingSubpath = p
                 this.openedCount++;
                 // console.log(`r`, r);
                 await this.nextTimeout(delay)
             }
             this.elapsedMs = this.totalMs
+            this.openTotalCount = 0
             resetProcess()
         } catch (e) {
             console.log(`e`, e);
