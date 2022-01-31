@@ -18,17 +18,17 @@ export class IdeManager {
     async stopWS(openAfter = true) {
         try {
             await PowerShell.$`Stop-Process -Name "webstorm64"`
-            if (openAfter) {
-                setTimeout(async () => await PowerShell.$`${this.appStore.settings.wsCommandName}`, 7000)
-            }
-
         } catch (e) {
             console.log(e)
+        }
+        if (openAfter) {
+            await PowerShell.invoke(`${this.appStore.settings.wsCommandName}`)
         }
     }
 
     @observable
     usedMem = 0
+    wsRunning = false
 
     async getWSUsedGB() {
         try {
@@ -36,10 +36,12 @@ export class IdeManager {
             let mem = Number(r.raw)
             // console.log(`mem`, mem);
             this.usedMem = mem
+            this.wsRunning = true
             return mem
         } catch (e) {
             console.log(e);
             this.usedMem = 0
+            this.wsRunning = false
             return 0
         }
     }
@@ -67,6 +69,10 @@ export class IdeManager {
     statusText = ''
     private cancelFlag: boolean = false;
 
+    async openWSPath(p) {
+        await PowerShell.invoke(`${this.appStore.settings.wsCommandName} "${p}"`)
+    }
+
     async openWS(paths, closeOpen = true) {
         try {
             // let r = await Promise.all(paths.map(p => PowerShell.$`ws ${p}`))
@@ -88,22 +94,26 @@ export class IdeManager {
                 this.openedCount = 0
                 this.statusText = ''
             }
-            let openWSPath = async (p) => await PowerShell.invoke(`${settings.wsCommandName} "${p}"`)
+            let initialI = 0;
             if (closeOpen && (await this.getWSUsedGB()) > 1) {
-                this.totalMs += openDelay
                 await this.stopWS(false);
-                let r = openWSPath(paths[0])
+            }
+            await this.getWSUsedGB()
+            if(!this.wsRunning){
+                let r = this.openWSPath(paths[0])
+                this.totalMs += openDelay
                 this.openedCount++;
+                initialI++;
             }
             await this.nextTimeout(openDelay)
 
-            for (let i = 1; i < paths.length; i++) {
+            for (let i = initialI; i < paths.length; i++) {
                 if (this.checkCanceled()) {
                     resetProcess()
                     return
                 }
                 let p = paths[i]
-                let r = openWSPath(p)
+                let r = this.openWSPath(p)
                 this.openedCount++;
                 // console.log(`r`, r);
                 await this.nextTimeout(delay)
@@ -121,12 +131,12 @@ export class IdeManager {
 
     @computed
     get canStopWorkspace() {
-        return this.usedMem > 1
+        return this.wsRunning
     }
 
     @computed
     get canStartWorkspace() {
-        return this.usedMem < 1
+        return !this.wsRunning
     }
 
     @computed
