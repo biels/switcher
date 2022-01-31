@@ -4,7 +4,7 @@ import * as fs from "fs";
 // import path
 let path = require("path");
 import cuid from "cuid";
-import {makeObservable, observable, runInAction} from "mobx";
+import {computed, makeObservable, observable, runInAction} from "mobx";
 import {filterDir, openPathInExplorer} from "../../utils/switcherUtils";
 
 export interface ProjectPathData {
@@ -145,5 +145,14 @@ export class ProjectController {
         this.data.checked = value
         this.saveInProjectPath()
         this.appStore.saveLocalData()
+    }
+
+    @computed
+    get selectedSubpaths() {
+        return this.data.paths.filter(path => path.checked)
+    }
+
+    async start(closeOpen = false) {
+        await this.appStore.ideManager.openWS(this.selectedSubpaths.map(p => p.path), closeOpen)
     }
 }

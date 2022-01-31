@@ -18,7 +18,10 @@ export class IdeManager {
     async stopWS(openAfter = true) {
         try {
             await PowerShell.$`Stop-Process -Name "webstorm64"`
-            if (openAfter) await PowerShell.$`ws`
+            if (openAfter) {
+                setTimeout(async () => await PowerShell.$`${this.appStore.settings.wsCommandName}`, 7000)
+            }
+
         } catch (e) {
             console.log(e)
         }
@@ -64,15 +67,7 @@ export class IdeManager {
     statusText = ''
     private cancelFlag: boolean = false;
 
-    async openWS(paths = [
-        `C:\\Users\\biel\\projects\\switcher`,
-        `C:\\Users\\biel\\projects\\bis\\bis-admin`,
-        `C:\\Users\\biel\\projects\\bis\\bis-server`,
-        `C:\\Users\\biel\\projects\\protocol\\pl-client`,
-        `C:\\Users\\biel\\projects\\protocol\\pl-server`,
-    ], closeOpen = true) {
-
-        console.log(`paths`, paths);
+    async openWS(paths, closeOpen = true) {
         try {
             // let r = await Promise.all(paths.map(p => PowerShell.$`ws ${p}`))
             // let r = PowerShell.$`ws ${paths.map(p => `"${p}"`).join(' ')}`
@@ -93,10 +88,11 @@ export class IdeManager {
                 this.openedCount = 0
                 this.statusText = ''
             }
+            let openWSPath = async (p) => await PowerShell.invoke(`${settings.wsCommandName} "${p}"`)
             if (closeOpen && (await this.getWSUsedGB()) > 1) {
                 this.totalMs += openDelay
                 await this.stopWS(false);
-                await PowerShell.$`${settings.wsCommandName} ${paths[0]}`
+                let r = openWSPath(paths[0])
                 this.openedCount++;
             }
             await this.nextTimeout(openDelay)
@@ -107,7 +103,7 @@ export class IdeManager {
                     return
                 }
                 let p = paths[i]
-                let r = await PowerShell.$`${settings.wsCommandName} ${p}`
+                let r = openWSPath(p)
                 this.openedCount++;
                 // console.log(`r`, r);
                 await this.nextTimeout(delay)
@@ -139,11 +135,12 @@ export class IdeManager {
     }
 
     async startWorkspace() {
-        await this.openWS(this.appStore.pathsToOpen, false)
+        await this.openWS(this.appStore.pathsToOpen, true)
     }
 
-    stopWorkspace() {
-        this.stopWS(false)
+    stopWorkspace(openAfter = false) {
+        console.log(`openAfter`, openAfter);
+        this.stopWS(openAfter)
     }
 
     cancelProcess(kill = false) {

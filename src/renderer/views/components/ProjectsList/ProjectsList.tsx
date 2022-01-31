@@ -108,7 +108,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                     {
                                                         name: `Start`,
                                                         icon: <MdPlayArrow/>,
-                                                        onClick: () => projectC.selectAll(),
+                                                        onClick: () => projectC.start(false),
                                                         hotKey: 'Enter'
                                                     },
                                                     {
@@ -123,7 +123,10 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                     {
                                                         name: `Select Only`,
                                                         icon: <GrCheckboxSelected/>,
-                                                        onClick: () => null
+                                                        onClick: () => {
+                                                            projectC.selectAll(false);
+                                                            navigate(`/`)
+                                                        }
                                                     },
                                                     {
                                                         name: `Delete`, icon: <MdDelete/>, onClick: () => {
@@ -144,14 +147,13 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                 ]
 
                                             }}
-                                            onClick={() => {
-                                                projectC.setChecked(!projectC.data.checked);
-                                                navigate('/')
-                                            }}
                                         >
                                             <div>
                                                 {projectC.data.checked ? '>' : ''}
-                                                <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>
+                                                <NameContainer {...provided.dragHandleProps} onClick={() => {
+                                                    projectC.setChecked(!projectC.data.checked);
+                                                    navigate('/')
+                                                }}>{item.data.name}</NameContainer>
                                             </div>
                                             <PathContainer>{item.data.rootPath}</PathContainer>
                                             <PathsList item={item.data}/>
