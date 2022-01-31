@@ -4,6 +4,7 @@ import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {useNavigate} from "react-router-dom";
+import {GrCheckboxSelected} from "react-icons/gr";
 
 const Container = styled.div`
   display: grid;
@@ -36,7 +37,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 });
 
 const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'white',
+    background: isDraggingOver ? 'lightblue' : 'transparent',
     display: 'flex',
     gap: 4,
     padding: grid,
@@ -89,6 +90,28 @@ export const PathsList = observer((props: PathsListProps) => {
                                             snapshot.isDragging,
                                             provided.draggableProps.style
                                         )}
+                                        onContextMenuCapture={() => {
+                                            let index = store.contextMenuStore.menuOptions.findIndex((o) => o.name == 'Start')
+
+                                            store.contextMenuStore.menuOptions.splice(index + 1, 0, {
+                                                name: `Start ${path.path} Only`,
+                                                icon: <GrCheckboxSelected/>,
+                                                onClick: () => {
+                                                    projectC.start(false);
+                                                    navigate(`/`)
+                                                }
+                                            })
+
+                                            store.contextMenuStore.menuOptions.splice(index + 2, 0, {
+                                                name: `Select ${path.path} Only`,
+                                                icon: <GrCheckboxSelected/>,
+                                                onClick: () => {
+                                                    projectC.selectAll(false);
+                                                    projectC.select([path.path])
+                                                    navigate(`/`)
+                                                }
+                                            })
+                                        }}
                                     >
                                         {/*<div>{path.checked}</div>*/}
 

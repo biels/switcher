@@ -103,10 +103,10 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                 snapshot.isDragging,
                                                 provided.draggableProps.style
                                             )}
-                                            onContextMenu={(e) => {
+                                            onContextMenuCapture={(e) => {
                                                 store.contextMenuStore.menuOptions = [
                                                     {
-                                                        name: `Start`,
+                                                        name: `Start All`,
                                                         icon: <MdPlayArrow/>,
                                                         onClick: () => projectC.start(false),
                                                         hotKey: 'Enter'
@@ -119,14 +119,6 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                             navigate(`/`)
                                                         },
                                                         hotKey: 'Ctrl + Enter'
-                                                    },
-                                                    {
-                                                        name: `Select Only`,
-                                                        icon: <GrCheckboxSelected/>,
-                                                        onClick: () => {
-                                                            projectC.selectAll(false);
-                                                            navigate(`/`)
-                                                        }
                                                     },
                                                     {
                                                         name: `Delete`, icon: <MdDelete/>, onClick: () => {

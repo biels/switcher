@@ -153,6 +153,11 @@ export class ProjectController {
     }
 
     async start(closeOpen = false) {
-        await this.appStore.ideManager.openWS(this.selectedSubpaths.map(p => p.path), closeOpen)
+        // await this.appStore.ideManager.openWS(this.selectedSubpaths.map(p => p.path), closeOpen)
+    }
+
+    async startOnly(subpath, closeOpen = false) {
+        path.join(this.data.rootPath, subpath)
+        // await this.appStore.ideManager.openWS(this.data.paths.filter(path => path.id == subpath), closeOpen)
     }
 }
