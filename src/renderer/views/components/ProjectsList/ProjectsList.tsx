@@ -147,14 +147,13 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                 ]
 
                                             }}
-                                            onClick={() => {
-                                                projectC.setChecked(!projectC.data.checked);
-                                                navigate('/')
-                                            }}
                                         >
                                             <div>
                                                 {projectC.data.checked ? '>' : ''}
-                                                <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>
+                                                <NameContainer {...provided.dragHandleProps} onClick={() => {
+                                                    projectC.setChecked(!projectC.data.checked);
+                                                    navigate('/')
+                                                }}>{item.data.name}</NameContainer>
                                             </div>
                                             <PathContainer>{item.data.rootPath}</PathContainer>
                                             <PathsList item={item.data}/>
