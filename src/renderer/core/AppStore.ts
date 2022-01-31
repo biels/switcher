@@ -165,6 +165,7 @@ export class AppStore {
         return subpaths
     }
 
+
     @observable.ref
     scanResults = []
     @observable

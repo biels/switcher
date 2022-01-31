@@ -108,7 +108,7 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                     {
                                                         name: `Start`,
                                                         icon: <MdPlayArrow/>,
-                                                        onClick: () => projectC.selectAll(),
+                                                        onClick: () => store.ideManager.openWS([store.ideManager]),
                                                         hotKey: 'Enter'
                                                     },
                                                     {
@@ -123,7 +123,10 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                     {
                                                         name: `Select Only`,
                                                         icon: <GrCheckboxSelected/>,
-                                                        onClick: () => null
+                                                        onClick: () => {
+                                                            projectC.selectAll(false);
+                                                            navigate(`/`)
+                                                        }
                                                     },
                                                     {
                                                         name: `Delete`, icon: <MdDelete/>, onClick: () => {

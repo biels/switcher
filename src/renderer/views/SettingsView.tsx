@@ -8,6 +8,7 @@ import {GrCheckboxSelected} from "react-icons/gr";
 import {openPathInExplorer} from "../../utils/switcherUtils";
 import * as electron from "electron";
 import {bindWithAS, useAS} from "../../utils/utils";
+import {PowerShell} from "node-powershell";
 
 const Container = styled.div`
   display: grid;
@@ -62,6 +63,10 @@ export const SettingsView = observer((props: SettingsViewProps) => {
         })}
         <br/>
         {/*<pre>{json5.stringify(store.pathsToOpen, null, 2)}</pre>*/}
+
+        <div>
+            <div>Copy path here</div> <input/> <button onClick={() => store.ideManager.openWS([], false)}>Open in webstorm</button>
+        </div>
         <h3 onContextMenu={(e) => {
             store.contextMenuStore.menuOptions = [
                 {
@@ -111,8 +116,18 @@ export const SettingsView = observer((props: SettingsViewProps) => {
         {/*<pre>{json5.stringify(store.scanResults, null, 2)}</pre>*/}
 
         <h3>Settings</h3>
-        <div>Startup extra time</div> <input placeholder={'Startup extra time'} {...bindWithAS($wsStartupExtraTime, as)}/>
-        <div>Project open time</div> <input placeholder={'Project open time'} {...bindWithAS($wsProjectOpenTime, as)}/>
-        <div>Command name</div> <input placeholder={'Command name'} {...bindWithAS($wsCommandName, as)}/>
+        <div>
+            <div>Startup extra time</div> <input placeholder={'Startup extra time'} {...bindWithAS($wsStartupExtraTime, as)}/>
+            <div>Project open time</div> <input placeholder={'Project open time'} {...bindWithAS($wsProjectOpenTime, as)}/>
+            <div>Command name</div> <input placeholder={'Command name'} {...bindWithAS($wsCommandName, as)}/>
+        </div>
+
+        <div>
+            <button onClick={async () => {
+                let result = await PowerShell.invoke(`${store.settings.wsCommandName}`)
+            }}>
+                <MdPlayArrow/>
+            </button>
+        </div>
     </Container>
 })
