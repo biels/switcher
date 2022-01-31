@@ -49,9 +49,10 @@ export const ControlToolbar = observer((props: ControlToolbarProps) => {
     let store = useAppStore()
     return <Container>
         <ProgressContainer>
-            {store.ideManager.totalMs > 0 ? <div>Opening {store.ideManager.openedCount} / {store.selectedSubpaths.length}</div> : <div >
-                {store.selectedSubpaths.length} selected / {store.selectedProjects.length} projects
-            </div>}
+            {store.ideManager.totalMs > 0 ?
+                <div>Opening {store.ideManager.openedCount + 1} / {store.ideManager.openTotalCount}</div> : <div>
+                    {store.selectedSubpaths.length} selected / {store.selectedProjects.length} projects
+                </div>}
             <span>{store.ideManager.statusText}</span>
         </ProgressContainer>
         <ButtonsContainer>

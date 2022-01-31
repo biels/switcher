@@ -68,7 +68,6 @@ export const PathsList = observer((props: PathsListProps) => {
 
     }
     let navigate = useNavigate()
-    console.log(`projectC.data.paths`, projectC.data.paths);
     return <Container>
         {/*{props.item.paths.map(i => i.path)}*/}
         <DragDropContext onDragEnd={onDragEnd} type={`${props.item.id}`}>
