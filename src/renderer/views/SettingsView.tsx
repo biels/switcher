@@ -7,6 +7,7 @@ import {MdDelete, MdFolderOpen, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow, Md
 import {GrCheckboxSelected} from "react-icons/gr";
 import {openPathInExplorer} from "../../utils/switcherUtils";
 import * as electron from "electron";
+import {bindWithAS, useAS} from "../../utils/utils";
 
 const Container = styled.div`
   display: grid;
@@ -19,6 +20,25 @@ export interface SettingsViewProps {
 
 export const SettingsView = observer((props: SettingsViewProps) => {
     let store = useAppStore()
+
+    let as = useAS((field, e) => {
+        console.log(`saving field`, field, e);
+        let fieldName = field.name;
+        console.log(`fieldName`, fieldName);
+        let value = form.$(fieldName).value;
+        if (['wsStartupExtraTime', 'wsProjectOpenTime'].includes(fieldName)) value = Number(value)
+        console.log(`value`, value, fieldName);
+        store.settings[fieldName] = value
+        store.saveLocalData()
+    }, 500)
+
+    let form = store.settingsForm
+    if (!form) return null;
+
+    let $wsStartupExtraTime = form.$('wsStartupExtraTime')
+    let $wsProjectOpenTime = form.$('wsProjectOpenTime')
+    let $wsCommandName = form.$('wsCommandName')
+
     return <Container>
         <h3>Selected paths to open</h3>
         {store.pathsToOpen.map((path, index) => {
@@ -89,5 +109,10 @@ export const SettingsView = observer((props: SettingsViewProps) => {
        </button>
            <button onClick={() => store.saveLocalData()}>Save config locally</button></div>
         {/*<pre>{json5.stringify(store.scanResults, null, 2)}</pre>*/}
+
+        <h3>Settings</h3>
+        <div>Startup extra time</div> <input placeholder={'Startup extra time'} {...bindWithAS($wsStartupExtraTime, as)}/>
+        <div>Project open time</div> <input placeholder={'Project open time'} {...bindWithAS($wsProjectOpenTime, as)}/>
+        <div>Command name</div> <input placeholder={'Command name'} {...bindWithAS($wsCommandName, as)}/>
     </Container>
 })

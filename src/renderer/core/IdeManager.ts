@@ -96,7 +96,7 @@ export class IdeManager {
             if (closeOpen && (await this.getWSUsedGB()) > 1) {
                 this.totalMs += openDelay
                 await this.stopWS(false);
-                await PowerShell.$`ws ${paths[0]}`
+                await PowerShell.$`${settings.wsCommandName} ${paths[0]}`
                 this.openedCount++;
             }
             await this.nextTimeout(openDelay)
@@ -107,7 +107,7 @@ export class IdeManager {
                     return
                 }
                 let p = paths[i]
-                let r = await PowerShell.$`ws ${p}`
+                let r = await PowerShell.$`${settings.wsCommandName} ${p}`
                 this.openedCount++;
                 // console.log(`r`, r);
                 await this.nextTimeout(delay)

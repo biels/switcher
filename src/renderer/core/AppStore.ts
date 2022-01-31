@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import {container, inject, singleton} from "tsyringe";
 import {computed, makeAutoObservable, makeObservable, observable} from "mobx";
+import MobxReactForm from "mobx-react-form";
 import {PowerShell} from 'node-powershell';
 import cuid from "cuid";
 import {ContextMenuStore} from "@/renderer/ContextMenu/ContextMenuStore";
@@ -16,7 +17,7 @@ import json5 from "json5";
 import {filterDir} from "../../utils/switcherUtils";
 import * as electron from "electron";
 import {IdeManager} from "@/renderer/core/IdeManager";
-
+import {MRF} from "../../utils/MRF";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -26,9 +27,9 @@ export let useAppStore = () => {
 export class AppStore {
     @observable
     registeredFolders: { path }[] = [
-        {path: 'C:\\Users\\biel\\projects'},
-        {path: 'C:\\Users\\biel\\projects\\sandbox'},
-        {path: 'C:\\Users\\biel\\projects\\git'}
+        // {path: 'C:\\Users\\biel\\projects'},
+        // {path: 'C:\\Users\\biel\\projects\\sandbox'},
+        // {path: 'C:\\Users\\biel\\projects\\git'}
     ];
     @observable
     projects: ProjectController[] = []
@@ -68,7 +69,11 @@ export class AppStore {
     settings = {
         wsStartupExtraTime: 4000,
         wsProjectOpenTime: 5500,
+        wsCommandName: 'webstorm'
+
     }
+
+    settingsForm: MRF
 
     contextMenuStore: ContextMenuStore = new ContextMenuStore();
 
@@ -90,6 +95,15 @@ export class AppStore {
         // this.itemsSel = new C3Selection({
         //
         // })
+
+        this.settingsForm = new MobxReactForm({
+            fields: [
+                'wsStartupExtraTime',
+                'wsProjectOpenTime',
+                'wsCommandName',
+            ],
+        })
+
         await this.loadLocalData()
         this.ideManager.init()
         window['store'] = this
@@ -104,11 +118,14 @@ export class AppStore {
         this.projects = projectsArr.map(p => {
             return this.getProjectController(p.id, p)
         })
+        this.settings = this.store.get('settings', this.settings) as any;
+        this.settingsForm.update(this.settings)
         // this.registeredFolders = this.store.get('registeredFolders', []) as any[]
     }
 
     async saveLocalData() {
         this.store.set('projects', this.projects.map(p => p.data))
+        this.store.set('settings', this.settings)
         this.store.set('registeredFolders', this.registeredFolders)
     }
 
