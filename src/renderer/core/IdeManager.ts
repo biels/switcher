@@ -28,6 +28,8 @@ export class IdeManager {
 
     @observable
     usedMem = 0
+
+    @observable
     wsRunning = false
 
     async getWSUsedGB() {
@@ -49,6 +51,7 @@ export class IdeManager {
 
     async startMonitoring() {
         let ms = 2200;
+        await this.getWSUsedGB()
         if (!window['monitInterval']) window['monitInterval'] = setInterval(() => {
             this.getWSUsedGB()
         }, ms)
@@ -102,7 +105,7 @@ export class IdeManager {
                 await this.stopWS(false);
             }
             await this.getWSUsedGB()
-            if(!this.wsRunning){
+            if (!this.wsRunning) {
                 let r = this.openWSPath(paths[0])
                 this.totalMs += openDelay
                 this.openedCount++;

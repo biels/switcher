@@ -126,7 +126,9 @@ const MainLayout = observer(() => {
                             </StatusContainer>
                             <div/>
                             <MemoryContainer onClick={() => store.ideManager.getWSUsedGB()}>
-                                {store.ideManager.usedMem.toFixed(2)} GB
+                                {store.ideManager.wsRunning ? <span>
+                                    {store.ideManager.usedMem.toFixed(2)} GB
+                                </span> : <span>Not running</span>}
                             </MemoryContainer>
                         </Footer>
                         <ContextMenu store={store.contextMenuStore}/>
