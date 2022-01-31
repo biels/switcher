@@ -107,7 +107,7 @@ export class IdeManager {
                     return
                 }
                 let p = paths[i]
-                let r = await PowerShell.$`ws ${p}`
+                let r = await PowerShell.$`${settings.wsCommandName} ${p}`
                 this.openedCount++;
                 // console.log(`r`, r);
                 await this.nextTimeout(delay)

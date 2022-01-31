@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import {container, inject, singleton} from "tsyringe";
 import {computed, makeAutoObservable, makeObservable, observable} from "mobx";
+import MobxReactForm from "mobx-react-form";
 import {PowerShell} from 'node-powershell';
 import cuid from "cuid";
 import {ContextMenuStore} from "@/renderer/ContextMenu/ContextMenuStore";
@@ -16,7 +17,7 @@ import json5 from "json5";
 import {filterDir} from "../../utils/switcherUtils";
 import * as electron from "electron";
 import {IdeManager} from "@/renderer/core/IdeManager";
-
+import {MRF} from "../../utils/MRF";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -72,6 +73,8 @@ export class AppStore {
 
     }
 
+    settingsForm: MRF
+
     contextMenuStore: ContextMenuStore = new ContextMenuStore();
 
 
@@ -92,6 +95,15 @@ export class AppStore {
         // this.itemsSel = new C3Selection({
         //
         // })
+
+        this.settingsForm = new MobxReactForm({
+            fields: [
+                'wsStartupExtraTime',
+                'wsProjectOpenTime',
+                'wsCommandName',
+            ],
+        })
+
         await this.loadLocalData()
         this.ideManager.init()
         window['store'] = this
@@ -103,10 +115,11 @@ export class AppStore {
 
     async loadLocalData() {
         let projectsArr = this.store.get('projects', []) as any[];
-        this.settings = this.store.get('settings', this.settings) as any;
         this.projects = projectsArr.map(p => {
             return this.getProjectController(p.id, p)
         })
+        this.settings = this.store.get('settings', this.settings) as any;
+        this.settingsForm.update(this.settings)
         // this.registeredFolders = this.store.get('registeredFolders', []) as any[]
     }
 
