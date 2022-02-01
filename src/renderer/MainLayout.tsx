@@ -75,7 +75,7 @@ const StatusContainer = styled.div`
 const MemoryContainer = styled.div`
   display: grid;
   user-select: none;
-  
+
 `
 const MainLayout = observer(() => {
     let store = useAppStore()
@@ -120,6 +120,7 @@ const MainLayout = observer(() => {
                             <StatusContainer>
                                 {store.ideManager.statusText} {store.ideManager.totalMs > 0 &&
                               <progress value={store.ideManager.elapsedMs} max={store.ideManager.totalMs}/>}
+                                {' '}
                                 {store.ideManager.totalMs > 0 && <button onClick={() => {
                                     store.ideManager.cancelProcess()
                                 }}>Cancel</button>}

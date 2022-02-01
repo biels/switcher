@@ -52,7 +52,8 @@ export class IdeManager {
     async startMonitoring() {
         let ms = 2200;
         await this.getWSUsedGB()
-        if (!window['monitInterval']) window['monitInterval'] = setInterval(() => {
+        if (window['monitInterval']) clearInterval(window['monitInterval'])
+        window['monitInterval'] = setInterval(() => {
             this.getWSUsedGB()
         }, ms)
     }
@@ -115,9 +116,10 @@ export class IdeManager {
                 this.totalMs += openDelay
                 this.openingSubpath = subpath
                 this.openedCount++;
+                await this.nextTimeout(openDelay)
                 initialI++;
             }
-            await this.nextTimeout(openDelay)
+
 
             for (let i = initialI; i < paths.length; i++) {
                 if (this.checkCanceled()) {

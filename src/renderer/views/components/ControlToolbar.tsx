@@ -53,7 +53,7 @@ export const ControlToolbar = observer((props: ControlToolbarProps) => {
     return <Container>
         <ProgressContainer>
             {store.ideManager.totalMs > 0 ?
-                <div>Opening {store.ideManager.openedCount + 1} / {store.ideManager.openTotalCount} ({displayPath.join('/')})</div> :
+                <div>Opening {store.ideManager.openedCount} / {store.ideManager.openTotalCount} ({displayPath.join('/')})</div> :
                 <div>
                     {store.selectedSubpaths.length} selected / {store.selectedProjects.length} projects
                 </div>}
