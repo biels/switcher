@@ -18,6 +18,7 @@ import {filterDir} from "../../utils/switcherUtils";
 import * as electron from "electron";
 import {IdeManager} from "@/renderer/core/IdeManager";
 import {MRF} from "../../utils/MRF";
+import remote from "@electron/remote";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -120,7 +121,7 @@ export class AppStore {
         })
         this.settings = this.store.get('settings', this.settings) as any;
         this.settingsForm.update(this.settings)
-        // this.registeredFolders = this.store.get('registeredFolders', []) as any[]
+        this.registeredFolders = this.store.get('registeredFolders', []) as any[]
     }
 
     async saveLocalData() {
@@ -218,11 +219,16 @@ export class AppStore {
     removeRegisteredFolder(folder: { path }) {
         let index = this.registeredFolders.findIndex(f => f.path === folder.path)
         if (index > -1) this.registeredFolders.splice(index, 1)
+        this.saveLocalData()
     }
 
-    addRegisteredFolder(path: string) {
-        this.registeredFolders.push({
-            path: path
+    addRegisteredFolder() {
+        let remote = require('@electron/remote');
+        let r = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {
+            properties: ["openDirectory", "showHiddenFiles"]
         })
+        if (!r || r.length == 0) return
+        r.forEach((s) => this.registeredFolders.push({path: s}))
+        this.saveLocalData()
     }
 }

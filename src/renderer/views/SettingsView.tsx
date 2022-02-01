@@ -73,15 +73,7 @@ export const SettingsView = observer((props: SettingsViewProps) => {
                     name: `Add path`,
                     icon: <MdFolderOpen/>,
                     onClick: () => {
-                        // open file dialog in electron
-
-                        let remote = require('@electron/remote');
-                        let r = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {
-                            properties: ["openDirectory", "showHiddenFiles"]
-                        })
-                        if (r.length == 0) return
-
-                        return store.addRegisteredFolder(r[0]);
+                        return store.addRegisteredFolder();
                     }
                 }
 
@@ -100,6 +92,9 @@ export const SettingsView = observer((props: SettingsViewProps) => {
             ]
 
         }}>{folder.path}</div>)}
+        <div>
+            <button onClick={() => store.addRegisteredFolder()}>Add folder</button>
+        </div>
         {/*<pre>{json5.stringify(store.registeredFolders, null, 2)}</pre>*/}
         {/*<button onClick={() => store.scanRegistredFolders()}>Scan all projects</button>*/}
         <br/>
