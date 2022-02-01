@@ -152,6 +152,10 @@ export class ProjectController {
         return this.data.paths.filter(path => path.checked)
     }
 
+    displayName(subpath) {
+        return [this.data.name, subpath].filter(a => a && a != '.').join('/')
+    }
+
     async start(closeOpen = false) {
         // await this.appStore.ideManager.openWS(this.selectedSubpaths.map(p => p.path), closeOpen)
     }

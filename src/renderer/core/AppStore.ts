@@ -19,6 +19,7 @@ import * as electron from "electron";
 import {IdeManager} from "@/renderer/core/IdeManager";
 import {MRF} from "../../utils/MRF";
 import remote from "@electron/remote";
+import {ConEmuManager} from "@/renderer/core/ConEmuManager";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -70,8 +71,9 @@ export class AppStore {
     settings = {
         wsStartupExtraTime: 4000,
         wsProjectOpenTime: 5500,
-        wsCommandName: 'webstorm'
-
+        wsCommandName: 'webstorm',
+        conEmuPath: "C:\\Program Files\\ConEmu\\ConEmu64.exe",
+        conEmuFlags: "-Single"
     }
 
     settingsForm: MRF
@@ -80,6 +82,7 @@ export class AppStore {
 
 
     ideManager: IdeManager = new IdeManager(this);
+    conEmuManager: ConEmuManager = new ConEmuManager(this);
 
     constructor() {
         makeObservable(this)
@@ -102,6 +105,8 @@ export class AppStore {
                 'wsStartupExtraTime',
                 'wsProjectOpenTime',
                 'wsCommandName',
+                'conEmuPath',
+                'conEmuFlags',
             ],
         })
 
@@ -119,7 +124,7 @@ export class AppStore {
         this.projects = projectsArr.map(p => {
             return this.getProjectController(p.id, p)
         })
-        this.settings = this.store.get('settings', this.settings) as any;
+        Object.assign(this.settings, this.store.get('settings', this.settings) as any);
         this.settingsForm.update(this.settings)
         this.registeredFolders = this.store.get('registeredFolders', []) as any[]
     }
@@ -151,10 +156,11 @@ export class AppStore {
     @computed
     get selectedSubpaths() {
         return this.selectedProjects.flatMap(project => {
-            return project.data.paths.filter(path => path.checked).map(path => {
+            return project.data.paths.filter(path => path.checked).map(p => {
                 return {
                     project: project,
-                    path: path
+                    path: p,
+                    fullPath: path.join(project.data.rootPath, p.path)
                 }
             })
         })
@@ -162,7 +168,7 @@ export class AppStore {
 
     @computed
     get pathsToOpen() {
-        let subpaths = this.selectedSubpaths.map(p => path.join(p.project.data.rootPath, p.path.path));
+        let subpaths = this.selectedSubpaths.map(p => p.fullPath);
         return subpaths
     }
 

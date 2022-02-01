@@ -39,34 +39,11 @@ export const SettingsView = observer((props: SettingsViewProps) => {
     let $wsStartupExtraTime = form.$('wsStartupExtraTime')
     let $wsProjectOpenTime = form.$('wsProjectOpenTime')
     let $wsCommandName = form.$('wsCommandName')
+    let $conEmuPath = form.$('conEmuPath')
+    let $conEmuFlags = form.$('conEmuFlags')
 
     return <Container>
-        <h3>Selected paths to open</h3>
-        {store.pathsToOpen.map((path, index) => {
-            return <div style={{paddingLeft: 0}} key={index}
-                        onContextMenu={(e) => {
-                            store.contextMenuStore.menuOptions = [
-                                {
-                                    name: `Open`,
-                                    icon: <MdPlayArrow/>,
-                                    onClick: () => store.ideManager.openWS([path], false)
-                                }, {
-                                    name: `Open in explorer`,
-                                    icon: <MdOpenInNew/>,
-                                    onClick: () => openPathInExplorer(path)
-                                },
 
-                            ]
-
-                        }}
-            >{path}</div>
-        })}
-        <br/>
-        {/*<pre>{json5.stringify(store.pathsToOpen, null, 2)}</pre>*/}
-
-        <div>
-            <div>Copy path here</div> <input/> <button onClick={() => store.ideManager.openWS([], false)}>Open in webstorm</button>
-        </div>
         <h3 onContextMenu={(e) => {
             store.contextMenuStore.menuOptions = [
                 {
@@ -115,6 +92,8 @@ export const SettingsView = observer((props: SettingsViewProps) => {
             <div>Startup extra time</div> <input placeholder={'Startup extra time'} {...bindWithAS($wsStartupExtraTime, as)}/>
             <div>Project open time</div> <input placeholder={'Project open time'} {...bindWithAS($wsProjectOpenTime, as)}/>
             <div>Command name</div> <input placeholder={'Command name'} {...bindWithAS($wsCommandName, as)}/>
+            <div>ConEmu Path</div> <input placeholder={'ConEmu Path'} {...bindWithAS($conEmuPath, as)}/>
+            <div>ConEmu Flags</div> <input placeholder={'ConEmu Flags'} {...bindWithAS($conEmuFlags, as)}/>
         </div>
 
         <div>

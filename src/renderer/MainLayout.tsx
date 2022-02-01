@@ -12,6 +12,7 @@ import {SettingsView} from "@/renderer/views/SettingsView";
 import {ContextMenu} from "@/renderer/ContextMenu/ContextMenu";
 import {OpenProjectsView} from "@/renderer/views/OpenProjectsView";
 import {observer} from "mobx-react";
+import {WorkspaceView} from "@/renderer/views/WorkspaceView";
 
 const Content = styled.div`
   min-height: 100vh;
@@ -48,7 +49,7 @@ const Header = styled.div`
   color: ${props => props.theme.colors.brand1.contrast};
   padding: 4px 12px;
   display: grid;
-  grid-template-columns: auto auto auto 1fr auto;
+  grid-template-columns: auto auto auto auto 1fr auto;
   gap: 8px;
 `;
 const Body = styled.div`
@@ -95,20 +96,24 @@ const MainLayout = observer(() => {
                             <Link to="/">
                                 <div>Switcher</div>
                             </Link>
-                            <Link to="/json">
-                                <div>JSON</div>
+                            <Link to="/workspace">
+                                <div>Current</div>
                             </Link>
                             <Link to="/open">
                                 <div>Open</div>
                             </Link>
-                            <div/>
                             <Link to="/settings">
                                 <div>Settings</div>
+                            </Link>
+                            <div/>
+                            <Link to="/json">
+                                <div>JSON</div>
                             </Link>
                         </Header>
                         <Body>
                             <Routes>
                                 <Route path="/json" element={<JSONView/>}/>
+                                <Route path="/workspace" element={<WorkspaceView/>}/>
                                 <Route path="/example-view-1" element={<ExampleView1/>}/>
                                 <Route path="/example-view-2" element={<ExampleView2/>}/>
                                 <Route path="/open" element={<OpenProjectsView/>}/>
