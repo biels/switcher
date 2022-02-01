@@ -12,6 +12,7 @@ export interface ProjectPathData {
     path
     open: string[]
     checked: boolean
+    startCmd: any;
 }
 
 export interface ProjectData {
@@ -23,6 +24,7 @@ export interface ProjectData {
 }
 
 export class ProjectController {
+
     id
     @observable
     data: ProjectData
@@ -69,13 +71,15 @@ export class ProjectController {
                 id: cuid(),
                 path: path.relative(this.data.rootPath, p),
                 open: [],
-                checked: true
+                checked: true,
+                startCmd: '',
             }))
             newPathsData.push({
                 id: cuid(),
                 path: '.',
                 open: [],
-                checked: newPathsData.length == 0
+                checked: newPathsData.length == 0,
+                startCmd: '',
             })
             this.data.paths = [...newPathsData, ...this.data.paths.filter(p => paths.indexOf(p.path) === -1)]
             // this.saveInProjectPath()
@@ -163,5 +167,26 @@ export class ProjectController {
     async startOnly(subpath, closeOpen = false) {
         path.join(this.data.rootPath, subpath)
         // await this.appStore.ideManager.openWS(this.data.paths.filter(path => path.id == subpath), closeOpen)
+    }
+
+    getPathPackageJsonPath(subpath) {
+        return path.join(this.data.rootPath, subpath, 'package.json')
+    }
+
+    getPathPackageJson(subpath) {
+        let p = this.getPathPackageJsonPath(subpath)
+        if (fs.existsSync(p)) {
+            return JSON.parse(fs.readFileSync(p, "utf8"))
+        }
+        return null
+    }
+
+    getPackageJsonScripts(subpath) {
+        let p = this.getPathPackageJson(subpath)
+        if (p) {
+            return p.scripts
+        }
+        return null
+
     }
 }

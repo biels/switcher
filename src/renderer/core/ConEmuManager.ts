@@ -10,8 +10,9 @@ export class ConEmuManager {
         // makeObservable(this);
     }
 
-    async openConEmuForPath(path){
+    async openConEmuForPath(path, command){
         if(!this.appStore.settings.conEmuPath) return
         await PowerShell.invoke(`& "${this.appStore.settings.conEmuPath}" ${this.appStore.settings.conEmuFlags} -Dir "${path}"`)
+        if(command) await PowerShell.invoke(`& "${"C:\\Program Files\\ConEmu\\ConEmu\\ConEmuC64.exe"}" -GuiMacro:0 print "${command}" -guimacro Keys("Enter")`)
     }
 }
