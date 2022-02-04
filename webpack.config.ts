@@ -1,11 +1,18 @@
 import path from "path";
-import { Configuration, DefinePlugin, WebpackPluginInstance } from "webpack";
+import {Configuration, DefinePlugin, WebpackPluginInstance} from "webpack";
 import "webpack-dev-server";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
+import {TsconfigPathsPlugin} from "tsconfig-paths-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import {merge} from "webpack-merge";
+
+// 1. import default from the plugin module
+const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
+
+// 2. create a transformer;
+// the factory additionally accepts an options object which described below
+const styledComponentsTransformer = createStyledComponentsTransformer();
 
 // wraps env vars injected by webpack cli
 interface Env {
@@ -78,7 +85,12 @@ function mainConfiguration(env: Env): Configuration {
                     //         ]
                     //     }
                     // }
-                    use: [{loader: "ts-loader", options: {transpileOnly: true}}],
+                    use: [{
+                        loader: "ts-loader", options: {
+                            transpileOnly: true,
+
+                        }
+                    }],
                     // exclude: /node_modules/,
                 }
             ]
@@ -86,7 +98,8 @@ function mainConfiguration(env: Env): Configuration {
 
         plugins: [
             new CopyWebpackPlugin({
-                patterns: ["../../package.json"] // electron packager need this file to pack the application. not needed during development.
+                patterns: ["../../package.json"] // electron packager need this file to pack the application. not
+                                                 // needed during development.
             })
         ]
 
@@ -130,7 +143,8 @@ function RendererConfiguration(env: Env): Configuration {
             filename: "scripts/[name].js",
             path: path.join(__dirname, "dist", "renderer"),
             clean: true,
-            globalObject: env.hotReload ? "self" : undefined, // Hot Module Replacement needs this to work. See: // https://stackoverflow.com/questions/51000346/uncaught-typeerror-cannot-read-property-webpackhotupdate-of-undefined
+            globalObject: env.hotReload ? "self" : undefined, // Hot Module Replacement needs this to work. See: //
+                                                              // https://stackoverflow.com/questions/51000346/uncaught-typeerror-cannot-read-property-webpackhotupdate-of-undefined
         },
 
         module: {
@@ -143,7 +157,13 @@ function RendererConfiguration(env: Env): Configuration {
                     //     loader: "babel-loader",
                     //     options: babelConfig
                     // },
-                    use: [{loader: "ts-loader", options: {transpileOnly: true}}],
+                    use: [{
+                        loader: "ts-loader", options: {
+                            transpileOnly: true,
+                            ...(env.development && {getCustomTransformers: () => ({before: [styledComponentsTransformer]})})
+
+                        }
+                    }],
                     exclude: /node_modules/,
 
                 },
