@@ -166,6 +166,10 @@ export class AppStore {
         })
     }
 
+    selectProjectOnly(projectId) {
+        this.projects.forEach(p => p.data.checked = p.data.id === projectId)
+    }
+
     @computed
     get pathsToOpen() {
         let subpaths = this.selectedSubpaths.map(p => p.fullPath);

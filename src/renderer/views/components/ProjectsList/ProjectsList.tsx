@@ -4,7 +4,15 @@ import {observer} from 'mobx-react'
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {PathsList} from "@/renderer/views/components/ProjectsList/components/PathsList";
-import {MdDelete, MdDeleteOutline, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow, MdRefresh} from "react-icons/md";
+import {
+    MdCheckCircle, MdCheckCircleOutline,
+    MdDelete,
+    MdDeleteOutline,
+    MdOpenInNew,
+    MdOutlineSelectAll,
+    MdPlayArrow,
+    MdRefresh
+} from "react-icons/md";
 import {GrCheckboxSelected} from "react-icons/gr";
 import {useNavigate} from "react-router-dom";
 
@@ -98,11 +106,14 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                         <div
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
-
                                             style={getItemStyle(
                                                 snapshot.isDragging,
                                                 provided.draggableProps.style
                                             )}
+                                            onDoubleClick={() => {
+                                                store.selectProjectOnly(item.id)
+                                                navigate(`/`)
+                                            }}
                                             onContextMenuCapture={(e) => {
                                                 store.contextMenuStore.menuOptions = [
                                                     {
@@ -112,6 +123,22 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                         hotKey: 'Enter'
                                                     },
                                                     {
+                                                        name: `Select ${item.data.name}`,
+                                                        icon: <MdCheckCircle/>,
+                                                        onClick: () => {
+                                                            projectC.setChecked(!projectC.data.checked);
+                                                            navigate('/')
+                                                        },
+                                                        hotKey: 'Ctrl + Enter'
+                                                    },{
+                                                        name: `Select ${item.data.name} Only`,
+                                                        icon: <MdCheckCircle/>,
+                                                        onClick: () => {
+                                                            store.selectProjectOnly(item.id)
+                                                            navigate(`/`)
+                                                        },
+                                                        hotKey: 'Ctrl + Enter'
+                                                    }, {
                                                         name: `Select All`,
                                                         icon: <MdOutlineSelectAll/>,
                                                         onClick: () => {
@@ -139,13 +166,14 @@ export const ProjectsList = observer((props: ProjectsListProps) => {
                                                 ]
 
                                             }}
+
                                         >
-                                            <div>
+                                            <div onClick={() => {
+                                                projectC.setChecked(!projectC.data.checked);
+                                                navigate('/')
+                                            }}>
                                                 {projectC.data.checked ? '>' : ''}
-                                                <NameContainer {...provided.dragHandleProps} onClick={() => {
-                                                    projectC.setChecked(!projectC.data.checked);
-                                                    navigate('/')
-                                                }}>{item.data.name}</NameContainer>
+                                                <NameContainer {...provided.dragHandleProps}>{item.data.name}</NameContainer>
                                             </div>
                                             <PathContainer>{item.data.rootPath}</PathContainer>
                                             <PathsList item={item.data}/>
