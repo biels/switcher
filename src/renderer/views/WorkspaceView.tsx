@@ -52,8 +52,9 @@ export const WorkspaceView = observer((props: WorkspaceViewProps) => {
             {store.selectedSubpaths.map((it, index) => {
                 let openWebstorm = () => store.ideManager.openWS([it.fullPath], false);
                 let copyPathToClipboard = () => electron.clipboard.writeText(`${it.fullPath}`);
+                let listName = "sc" + it.fullPath;
                 return <div style={{paddingLeft: 8}} key={index}
-                            onContextMenuCapture={(e) => {
+                                                          onContextMenuCapture={(e) => {
                                 store.contextMenuStore.menuOptions = [
                                     {
                                         name: `Open`,
@@ -85,7 +86,7 @@ export const WorkspaceView = observer((props: WorkspaceViewProps) => {
                             return store.conEmuManager.openConEmuForPath(it.fullPath, command);
                         }}>Open terminal
                         </button>
-                        <input value={it.path.startCmd} onChange={e => it.path.startCmd = e.target.value} list="startCmds"
+                        <input value={it.path.startCmd} onChange={e => it.path.startCmd = e.target.value} list={listName}
                                onContextMenu={(e) => {
                                    let scripts = it.project.getPackageJsonScripts(it.path.path);
                                    if(!scripts) return;
@@ -108,7 +109,7 @@ export const WorkspaceView = observer((props: WorkspaceViewProps) => {
                                    })
                                }}
                         />
-                        <datalist id="startCmds">
+                        <datalist id={listName}>
                             {Object.entries(it.project.getPackageJsonScripts(it.path.path) || {}).map(([k, v]) => {
                                 return <option key={k} value={`yarn ${k}`}>{v}</option>
                             })}
