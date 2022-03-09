@@ -16,12 +16,18 @@ function createWindow(): BrowserWindow | null {
 
     let width = 600;
     let height = 800;
+     let screen = require('electron').screen
+    let display = screen.getPrimaryDisplay();
+    let screenWidth = display.size.width;
+    let screenHeight = display.size.height;
+    // windows taskbar height
+    let taskbarHeight = screen.getPrimaryDisplay().size.height - screen.getPrimaryDisplay().workAreaSize.height  ;
     let win: BrowserWindow | null = new BrowserWindow({
         width: width,
         height: height,
         // bottom right corner of screen.
         x: screen.getPrimaryDisplay().bounds.width - width,
-        y: screen.getPrimaryDisplay().bounds.height - height,
+        y: screen.getPrimaryDisplay().bounds.height - height - taskbarHeight,
         maximizable: true,
 
         webPreferences: {
@@ -29,7 +35,7 @@ function createWindow(): BrowserWindow | null {
             contextIsolation: false,
 
         },
-        alwaysOnTop: true,
+        alwaysOnTop: false,
     });
 
     if (IS_DEV) {
