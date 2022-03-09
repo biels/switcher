@@ -35,7 +35,7 @@ export class IdeManager {
     async getWSUsedGB() {
         try {
             let r = await PowerShell.$`(Get-Process webstorm64).PM / 1GB`
-            let mem = Number(r.raw)
+            let mem = Number(r.raw.replace(',', "."))
             // console.log(`mem`, mem);
             this.usedMem = mem
             this.wsRunning = true

@@ -189,7 +189,6 @@ export class AppStore {
 
             let subdirs = fs.readdirSync(p).filter(filterDir(p))
             // return subdirs
-            // return subdirs
             return subdirs.flatMap(s => {
                 let path1 = path.join(p, s);
                 let innerSubdirs = fs.readdirSync(path1).filter(filterDir(path1))
