@@ -5,6 +5,7 @@ import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import {useAppStore} from "@/renderer/core/AppStore";
 import {useNavigate} from "react-router-dom";
 import {GrCheckboxSelected} from "react-icons/gr";
+import {MdPlayArrow} from "react-icons/md";
 
 const Container = styled.div`
   display: grid;
@@ -92,12 +93,16 @@ export const PathsList = observer((props: PathsListProps) => {
                                         )}
                                         onContextMenuCapture={() => {
                                             let index = store.contextMenuStore.menuOptions.findIndex((o) => o.name == 'Start')
+                                            let fullPath = [projectC.data.rootPath, path.path].join('/')
+                                            let openWebstorm = () => store.ideManager.openWS([fullPath], false);
 
                                             store.contextMenuStore.menuOptions.splice(index + 1, 0, {
+
                                                 name: `Start ${path.path} Only`,
-                                                icon: <GrCheckboxSelected/>,
+                                                icon: <MdPlayArrow/>,
                                                 onClick: () => {
-                                                    projectC.start(false);
+                                                    openWebstorm();
+                                                    // projectC.start(false);
                                                     navigate(`/`)
                                                 }
                                             })
@@ -122,13 +127,13 @@ export const PathsList = observer((props: PathsListProps) => {
                                                 navigate('/')
                                             }}>
 
-                                        <input type={'checkbox'}
-                                               disabled={!projectC.data.checked}
-                                                    checked={path.checked}
-                                                onChange={(e) => {
-                                                    projectC.select([path.path], e.target.checked);
-                                                    navigate('/')
-                                                }}/>
+                                            <input type={'checkbox'}
+                                                   disabled={!projectC.data.checked}
+                                                   checked={path.checked}
+                                                   onChange={(e) => {
+                                                       projectC.select([path.path], e.target.checked);
+                                                       navigate('/')
+                                                   }}/>
 
                                             {path.path}
                                         </div>
