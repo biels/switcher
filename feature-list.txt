@@ -1,0 +1,15 @@
+Lsit of features:
+
+Tracking of github repos
+
+Clone a github repo by name / link and branch
+
+Tracking of installed ides
+
+Tracking of databases
+
+K8s development
+
+All kinds of utils / shortcuts to utils
+
+
