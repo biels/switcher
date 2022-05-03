@@ -20,6 +20,7 @@ import {IdeManager} from "@/renderer/core/IdeManager";
 import {MRF} from "../../utils/MRF";
 import remote from "@electron/remote";
 import {ConEmuManager} from "@/renderer/core/ConEmuManager";
+import {HostsManager} from "@/renderer/core/HostsManager";
 
 export let useAppStore = () => {
     return container.resolve(AppStore);
@@ -83,6 +84,7 @@ export class AppStore {
 
     ideManager: IdeManager = new IdeManager(this);
     conEmuManager: ConEmuManager = new ConEmuManager(this);
+    hostsManager: HostsManager = new HostsManager(this)
 
     constructor() {
         makeObservable(this)

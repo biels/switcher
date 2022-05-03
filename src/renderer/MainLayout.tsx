@@ -13,6 +13,7 @@ import {ContextMenu} from "@/renderer/ContextMenu/ContextMenu";
 import {OpenProjectsView} from "@/renderer/views/OpenProjectsView";
 import {observer} from "mobx-react";
 import {WorkspaceView} from "@/renderer/views/WorkspaceView";
+import {HostsView} from "@/renderer/views/HostsView";
 
 const Content = styled.div`
   min-height: 100vh;
@@ -49,7 +50,7 @@ const Header = styled.div`
   color: ${props => props.theme.colors.brand1.contrast};
   padding: 4px 12px;
   display: grid;
-  grid-template-columns: auto auto auto auto 1fr auto;
+  grid-template-columns: auto auto auto auto auto 1fr auto;
   gap: 8px;
 `;
 const Body = styled.div`
@@ -105,6 +106,9 @@ const MainLayout = observer(() => {
                             <Link to="/settings">
                                 <div>Settings</div>
                             </Link>
+                            <Link to="/hosts">
+                                <div>Hosts</div>
+                            </Link>
                             <div/>
                             <Link to="/json">
                                 <div>JSON</div>
@@ -117,6 +121,7 @@ const MainLayout = observer(() => {
                                 <Route path="/example-view-1" element={<ExampleView1/>}/>
                                 <Route path="/example-view-2" element={<ExampleView2/>}/>
                                 <Route path="/open" element={<OpenProjectsView/>}/>
+                                <Route path="/hosts" element={<HostsView/>}/>
                                 <Route path="/" element={<HomeView/>}/>
                                 <Route path="/settings" element={<SettingsView/>}/>
                             </Routes>
