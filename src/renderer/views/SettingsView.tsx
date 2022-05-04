@@ -95,6 +95,7 @@ export const SettingsView = observer((props: SettingsViewProps) => {
             <div>ConEmu Path</div> <input placeholder={'ConEmu Path'} {...bindWithAS($conEmuPath, as)}/>
             <div>ConEmu Flags</div> <input placeholder={'ConEmu Flags'} {...bindWithAS($conEmuFlags, as)}/>
         </div>
+        {/*<button onClick={() => store.store.openInEditor()}>Open in editor</button>*/}
 
         <div>
             <button onClick={async () => {

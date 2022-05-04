@@ -39,10 +39,21 @@ export const HostsView = observer((props: SettingsViewProps) => {
     return <Container>
         <button onClick={() => {
             hostsManager.mode == 'lan' ? hostsManager.mode = 'wan' : hostsManager.mode = 'lan';
-            hostsManager.editHostsFileExample();
         }}>
             {hostsManager.mode == 'lan' ? 'Enable LAN Mode' : 'Enable WAN Mode'}
         </button>
+        <button onClick={() => {
+            hostsManager.openSettingsDir()
+        }}>Open Settings Dir</button>
+
+        <button onClick={() => {
+            hostsManager.editHostsFile(true)
+        }}>Set LAN (Enable)</button>
+
+        <button onClick={() => {
+            hostsManager.editHostsFile(false)
+        }}>Set WAN (Disable)</button>
+
         <pre>{hostsManager.readHostsFile()}</pre>
     </Container>
 })

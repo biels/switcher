@@ -121,6 +121,9 @@ export class AppStore {
 
     // itemsSel: C3Selection
 
+    getSettingsDir() {
+// return this.store.path
+    }
     async loadLocalData() {
         let projectsArr = this.store.get('projects', []) as any[];
         this.projects = projectsArr.map(p => {
