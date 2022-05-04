@@ -37,23 +37,38 @@ export const HostsView = observer((props: SettingsViewProps) => {
     let mode = hostsManager.mode
 
     return <Container>
-        <button onClick={() => {
-            hostsManager.mode == 'lan' ? hostsManager.mode = 'wan' : hostsManager.mode = 'lan';
-        }}>
-            {hostsManager.mode == 'lan' ? 'Enable LAN Mode' : 'Enable WAN Mode'}
-        </button>
-        <button onClick={() => {
-            hostsManager.openSettingsDir()
-        }}>Open Settings Dir</button>
+        {/*<button onClick={() => {*/}
+        {/*    hostsManager.mode == 'lan' ? hostsManager.mode = 'wan' : hostsManager.mode = 'lan';*/}
+        {/*}}>*/}
+        {/*    {hostsManager.mode == 'lan' ? 'Enable LAN Mode' : 'Enable WAN Mode'}*/}
+        {/*</button>*/}
+        <div>{hostsManager.mode == 'lan' ? 'LAN Mode (Enabled)' : 'WAN Mode (Disabled)'}</div>
 
-        <button onClick={() => {
-            hostsManager.editHostsFile(true)
-        }}>Set LAN (Enable)</button>
+        <div style={{display: 'grid', gridAutoFlow: 'column'}}>
+            <button style={{padding: 8}} onClick={() => {
+                hostsManager.editHostsFile(true)
+                hostsManager.mode = 'lan'
+            }}>Set LAN (Enable)
+            </button>
 
-        <button onClick={() => {
-            hostsManager.editHostsFile(false)
-        }}>Set WAN (Disable)</button>
+            <button onClick={() => {
+                hostsManager.editHostsFile(false)
+                hostsManager.mode = 'wan'
+            }}>Set WAN (Disable)
+            </button>
+        </div>
 
+        <div>Patch:</div>
+        <textarea value={hostsManager.getHostsPatchFileContent()}></textarea>
+        <div style={{display: 'grid', gridAutoFlow: 'column'}}>
+            <button onClick={() => openPathInExplorer(hostsManager.getHostsPatchFilePath())}>Open patch file</button>
+            <button onClick={() => {
+                hostsManager.openToolsDir()
+            }}>Open Tools Dir
+            </button>
+        </div>
+        Hosts content:
         <pre>{hostsManager.readHostsFile()}</pre>
+        <button onClick={() => openPathInExplorer(hostsManager.getHostsFilePath())}>Open hosts file</button>
     </Container>
 })

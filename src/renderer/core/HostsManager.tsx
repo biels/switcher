@@ -25,13 +25,15 @@ export class HostsManager {
     readHostsFile() {
         let filePath = this.getHostsFilePath();
         let content = fs.readFileSync(filePath, {encoding: "utf-8"});
-        console.log(`content`, content);
         return content;
     }
 
     openSettingsDir() {
         let dir = `${app.getPath('userData')}`
         openPathInExplorer(dir)
+    }
+    openToolsDir(){
+        openPathInExplorer(this.getToolsDir())
     }
 
     getHostsFilePath() {
