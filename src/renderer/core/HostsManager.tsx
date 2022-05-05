@@ -25,7 +25,6 @@ export class HostsManager {
     hostsLastUpdatedAt: Date = null;
 
 
-
 //
     readHostsFile() {
         let filePath = this.getHostsFilePath();
@@ -90,6 +89,7 @@ export class HostsManager {
     }
 
     private getDefaultPatchContent() {
+
         return "# Test template";
     }
 
@@ -169,15 +169,16 @@ export class HostsManager {
         let add = this.mergeHostsFile(content, patch, false)
         let subtract = this.mergeHostsFile(content, patch, true)
 
-        if(content == add) {
+        if (content == add) {
             return 'lan'
-        } else if(content == subtract) {
+        } else if (content == subtract) {
             return 'wan'
         } else {
             return 'indeterminate'
         }
 
     }
+
     refreshMode() {
         this.mode = this.checkHostsContainsPatch()
     }
