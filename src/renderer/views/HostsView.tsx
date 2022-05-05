@@ -39,23 +39,32 @@ export const HostsView = observer((props: SettingsViewProps) => {
     let hostsManager = store.hostsManager;
     let mode = hostsManager.mode
 
+    let statusText = {
+        'lan': {text: 'LAN Mode (Enabled)', color: '#55b955'},
+        'wan': {text: 'WAN Mode (Disabled)', color: '#bd3030'},
+        'indeterminate': {text: 'Mixed Mode', color: '#c4a408'}
+    }
+    let statusObj = statusText[hostsManager.mode];
     return <Container>
         {/*<button onClick={() => {*/}
         {/*    hostsManager.mode == 'lan' ? hostsManager.mode = 'wan' : hostsManager.mode = 'lan';*/}
         {/*}}>*/}
         {/*    {hostsManager.mode == 'lan' ? 'Enable LAN Mode' : 'Enable WAN Mode'}*/}
         {/*</button>*/}
-        <div>{hostsManager.mode == 'lan' ? 'LAN Mode (Enabled)' : 'WAN Mode (Disabled)'}</div>
+        <div style={{display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 6, alignItems: 'center', padding: 16}}>
+            <div style={{backgroundColor: statusObj.color, width: 12, height: 12, borderRadius: 10}}/>
+            {statusObj.text}
+        </div>
 
         <div style={{display: 'grid', gridAutoFlow: 'column'}}>
-            <button style={{padding: 8}} onClick={async () => {
+            <button style={{padding: 8}} disabled={hostsManager.mode == 'lan'} onClick={async () => {
                 await hostsManager.editHostsFile(true)
                 hostsManager.mode = 'lan'
                 navigate(`/hosts`)
             }}>Set LAN (Enable)
             </button>
 
-            <button onClick={async () => {
+            <button disabled={hostsManager.mode == 'wan'} onClick={async () => {
                 await hostsManager.editHostsFile(false)
                 hostsManager.mode = 'wan'
                 navigate(`/hosts`)
