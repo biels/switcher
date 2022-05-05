@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as path from "path";
 import {PowerShell} from "node-powershell";
 import {AppStore} from "@/renderer/core/AppStore";
 import {makeObservable, observable} from "mobx";
@@ -15,14 +14,17 @@ export class HostsManager {
         makeObservable(this);
         setTimeout(() => {
             // this.test1()
+            this.refreshMode();
         })
     }
 
     @observable
-    mode: 'lan' | 'wan' = "lan";
+    mode: 'lan' | 'wan' | 'indeterminate' = "lan";
 
     @observable
     hostsLastUpdatedAt: Date = null;
+
+
 
 //
     readHostsFile() {
@@ -48,7 +50,7 @@ export class HostsManager {
         try {
             let r = await PowerShell.invoke(command)
             console.log(`PS result`, r);
-            if(!r.hadErrors) {
+            if (!r.hadErrors) {
                 this.hostsLastUpdatedAt = new Date();
             }
         } catch (e) {
@@ -98,6 +100,7 @@ export class HostsManager {
         // fs.writeFileSync(this.getHostsFilePath(), newContent, {encoding: "utf-8"});
         console.log(`newContent`, newContent);
         await this.writeHostsFile(newContent)
+        this.refreshMode();
     }
 
     mergeHostsFile(exisitngHosts, patchHosts, subtract = false) {
@@ -160,6 +163,25 @@ export class HostsManager {
         return resultStr.join('\n')
     }
 
+    checkHostsContainsPatch(): 'lan' | 'wan' | 'indeterminate' {
+        let content = this.readHostsFile()
+        let patch = this.getHostsPatchFileContent()
+        let add = this.mergeHostsFile(content, patch, false)
+        let subtract = this.mergeHostsFile(content, patch, true)
+
+        if(content == add) {
+            return 'lan'
+        } else if(content == subtract) {
+            return 'wan'
+        } else {
+            return 'indeterminate'
+        }
+
+    }
+    refreshMode() {
+        this.mode = this.checkHostsContainsPatch()
+    }
+
     test1() {
         let existing = `
             # Top comment in existing
@@ -212,4 +234,6 @@ export class HostsManager {
         fs.copyFileSync(this.getHostsPatchFilePath(), this.getHostsPatchFilePath() + '.bak');
         fs.writeFileSync(this.getHostsPatchFilePath(), this.getDefaultPatchContent(), {encoding: "utf-8"});
     }
+
+
 }
