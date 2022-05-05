@@ -21,6 +21,9 @@ export class HostsManager {
     @observable
     mode: 'lan' | 'wan' = "lan";
 
+    @observable
+    hostsLastUpdatedAt: Date = null;
+
 //
     readHostsFile() {
         let filePath = this.getHostsFilePath();
@@ -31,10 +34,26 @@ export class HostsManager {
     async writeHostsFile(newContent) {
         if (!_.isString(newContent)) return
         if (newContent.length == 0) return
-        let command = `Start-Process powershell -Verb runAs (Set-Content -Path "${this.getHostsFilePath()}" -Value @"\n${newContent}\n"@`;
+        // newContent = 'hi'
+        let tmpFilePath = `${this.getToolsDir()}\\hosts.tmp.txt`
+        let testFilePath = `${this.getToolsDir()}\\hosts.test.txt`
+        fs.writeFileSync(tmpFilePath, newContent, {encoding: "utf-8"});
+        // $var = "ls"; Start-Process powershell -Verb runAs -Argument "-Command $var"
+        // let command = `Start-Process powershell -Verb runAs -Command Set-Content -Path "${this.getHostsFilePath()}" -Value @"\n${newContent}\n"@`;
+        // let innerCommand = `Set-Content -Path "${this.getHostsFilePath()}" -Value @"\n${newContent}\n"@\n Start-Sleep -s 15`;
+        let hostsFilePath = this.getHostsFilePath();
+        let innerCommand = `Copy-Item -Path "${tmpFilePath}" -Destination "${hostsFilePath}" -Force`;
+        let command = `$var = '${innerCommand}'; Start-Process powershell -Verb runAs -Argument "-Command $var"`;
         console.log(`command`, command);
-        let r = await PowerShell.invoke(command)
-        console.log(`r`, r);
+        try {
+            let r = await PowerShell.invoke(command)
+            console.log(`PS result`, r);
+            if(!r.hadErrors) {
+                this.hostsLastUpdatedAt = new Date();
+            }
+        } catch (e) {
+            console.error(`e`, e);
+        }
     }
 
     openSettingsDir() {
@@ -186,5 +205,11 @@ export class HostsManager {
         let subtractEmpty = this.mergeHostsFile(subtractAfterAdd, '', true)
         console.log(`subtractEmpty`, '\n', subtractEmpty, subtractEmpty === subtractAfterAdd ? 'PASS' : 'FAIL');
         // console.log(`add, addAgain`, add, '\n','\n', addAgain);
+    }
+
+    resetPatchFile() {
+        // Make backup of the patch file
+        fs.copyFileSync(this.getHostsPatchFilePath(), this.getHostsPatchFilePath() + '.bak');
+        fs.writeFileSync(this.getHostsPatchFilePath(), this.getDefaultPatchContent(), {encoding: "utf-8"});
     }
 }

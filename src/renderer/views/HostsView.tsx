@@ -5,14 +5,16 @@ import {useAppStore} from "@/renderer/core/AppStore";
 import json5 from "json5";
 import {MdDelete, MdFolderOpen, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow, MdRefresh} from "react-icons/md";
 import {GrCheckboxSelected} from "react-icons/gr";
-import {openPathInExplorer} from "../../utils/switcherUtils";
+import {openFileInNotepad, openPathInExplorer} from "../../utils/switcherUtils";
 import * as electron from "electron";
 import {bindWithAS, useAS} from "../../utils/utils";
 import {PowerShell} from "node-powershell";
+import {useNavigate} from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
   padding-left: 12px;
+  padding-right: 12px;
 `
 
 export interface SettingsViewProps {
@@ -21,6 +23,7 @@ export interface SettingsViewProps {
 
 export const HostsView = observer((props: SettingsViewProps) => {
     let store = useAppStore()
+    let navigate = useNavigate()
 
     let as = useAS((field, e) => {
         let fieldName = field.name;
@@ -48,12 +51,14 @@ export const HostsView = observer((props: SettingsViewProps) => {
             <button style={{padding: 8}} onClick={async () => {
                 await hostsManager.editHostsFile(true)
                 hostsManager.mode = 'lan'
+                navigate(`/hosts`)
             }}>Set LAN (Enable)
             </button>
 
             <button onClick={async () => {
                 await hostsManager.editHostsFile(false)
                 hostsManager.mode = 'wan'
+                navigate(`/hosts`)
             }}>Set WAN (Disable)
             </button>
         </div>
@@ -66,9 +71,15 @@ export const HostsView = observer((props: SettingsViewProps) => {
                 hostsManager.openToolsDir()
             }}>Open Tools Dir
             </button>
+            <button onClick={() => {
+                hostsManager.resetPatchFile()
+                navigate(`/hosts`)
+            }}>Reset patch file
+            </button>
         </div>
         Hosts content:
         <pre>{hostsManager.readHostsFile()}</pre>
-        <button onClick={() => openPathInExplorer(hostsManager.getHostsFilePath())}>Open hosts file</button>
+        <button onClick={() => openFileInNotepad(hostsManager.getHostsFilePath())}>Open hosts file</button>
+        <div>Last updated: {hostsManager.hostsLastUpdatedAt && hostsManager.hostsLastUpdatedAt.toTimeString()}</div>
     </Container>
 })

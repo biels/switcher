@@ -20,3 +20,13 @@ export let openPathInExplorer = (path: string) => {
         require('child_process').exec(`xdg-open ${path}`);
     }
 };
+
+export let openFileInNotepad = (path: string) => {
+    if (process.platform === 'darwin') {
+        require('child_process').exec(`open ${path}`);
+    } else if (process.platform === 'win32') {
+        require('child_process').exec(`notepad ${path}`);
+    } else {
+        require('child_process').exec(`xdg-open ${path}`);
+    }
+};
