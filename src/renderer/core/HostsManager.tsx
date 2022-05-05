@@ -5,7 +5,7 @@ import {AppStore} from "@/renderer/core/AppStore";
 import {makeObservable, observable} from "mobx";
 import {app} from "@electron/remote";
 import {openPathInExplorer} from "../../utils/switcherUtils";
-
+import * as _ from 'lodash'
 
 export class HostsManager {
     appStore: AppStore;
@@ -28,11 +28,21 @@ export class HostsManager {
         return content;
     }
 
+    async writeHostsFile(newContent) {
+        if (!_.isString(newContent)) return
+        if (newContent.length == 0) return
+        let command = `Start-Process powershell -Verb runAs (Set-Content -Path "${this.getHostsFilePath()}" -Value @"\n${newContent}\n"@`;
+        console.log(`command`, command);
+        let r = await PowerShell.invoke(command)
+        console.log(`r`, r);
+    }
+
     openSettingsDir() {
         let dir = `${app.getPath('userData')}`
         openPathInExplorer(dir)
     }
-    openToolsDir(){
+
+    openToolsDir() {
         openPathInExplorer(this.getToolsDir())
     }
 
@@ -40,9 +50,11 @@ export class HostsManager {
         return `C:\\Windows\\System32\\Drivers\\etc\\hosts`
         // return `${app.getPath('appData')}\\hosts.test.txt`
     }
-    getToolsDir(){
+
+    getToolsDir() {
         return `${app.getPath('home')}\\tools`
     }
+
     getHostsPatchFilePath() {
         return `${this.getToolsDir()}\\hosts.template.txt`
     }
@@ -60,11 +72,13 @@ export class HostsManager {
         return "# Test template";
     }
 
-    editHostsFile(apply = true) {
+    async editHostsFile(apply = true) {
         // Edit hosts file according to the mode
         let content = this.readHostsFile()
         let newContent = this.mergeHostsFile(content, this.getHostsPatchFileContent(), !apply)
-        fs.writeFileSync(this.getHostsFilePath(), newContent, {encoding: "utf-8"});
+        // fs.writeFileSync(this.getHostsFilePath(), newContent, {encoding: "utf-8"});
+        console.log(`newContent`, newContent);
+        await this.writeHostsFile(newContent)
     }
 
     mergeHostsFile(exisitngHosts, patchHosts, subtract = false) {
@@ -81,7 +95,7 @@ export class HostsManager {
         let serializeLine = (line) => {
             if (line.comment) {
                 return line.comment
-            } else if(line.ip && line.host) {
+            } else if (line.ip && line.host) {
                 return `${line.ip} ${line.host}`
             } else {
                 return ''
@@ -108,7 +122,7 @@ export class HostsManager {
                 // Remove from missing if found
                 // if (patchLine) missingLines.filter(ml => !(eq(ml, patchLine)))
                 let s = serializeLine(line);
-                if(!patchLine){
+                if (!patchLine) {
                     result.push(line)
                     linesMap[s] = true
                 }

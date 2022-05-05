@@ -45,14 +45,14 @@ export const HostsView = observer((props: SettingsViewProps) => {
         <div>{hostsManager.mode == 'lan' ? 'LAN Mode (Enabled)' : 'WAN Mode (Disabled)'}</div>
 
         <div style={{display: 'grid', gridAutoFlow: 'column'}}>
-            <button style={{padding: 8}} onClick={() => {
-                hostsManager.editHostsFile(true)
+            <button style={{padding: 8}} onClick={async () => {
+                await hostsManager.editHostsFile(true)
                 hostsManager.mode = 'lan'
             }}>Set LAN (Enable)
             </button>
 
-            <button onClick={() => {
-                hostsManager.editHostsFile(false)
+            <button onClick={async () => {
+                await hostsManager.editHostsFile(false)
                 hostsManager.mode = 'wan'
             }}>Set WAN (Disable)
             </button>
