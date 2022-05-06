@@ -9,14 +9,19 @@ interface Domain {
 }
 
 let domains: Domain = {
-    _ip: '192.168.150',
+    _ip: '192.168.1.150',
     'protocolapp.net': {
         'ci': {},
         'demo': {},
         'next': {},
+        'dev': {},
+        'beta': {},
+        's3': {},
     },
     'barcelonainernationalsocial.com': {
-        bis: {}
+        enable: false,
+        'bis': {},
+        'bis-dev': {},
     }
 }
 export let genHosts = (d = domains) => {

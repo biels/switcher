@@ -5,6 +5,7 @@ import {makeObservable, observable} from "mobx";
 import {app} from "@electron/remote";
 import {openPathInExplorer} from "../../utils/switcherUtils";
 import * as _ from 'lodash'
+import {genHosts} from "../../utils/hosts/hosts-gen";
 
 export class HostsManager {
     appStore: AppStore;
@@ -89,8 +90,7 @@ export class HostsManager {
     }
 
     private getDefaultPatchContent() {
-
-        return "# Test template";
+        return genHosts()
     }
 
     async editHostsFile(apply = true) {
