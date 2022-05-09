@@ -33,7 +33,7 @@
     "cuid": "^2.1.8",
     "electron-store": "^8.0.1",
     "encoding": "^0.1.13",
-    "json5": "^2.2.0",
+    "json5": "^2.2.1",
     "mobx": "^6.3.13",
     "mobx-react": "^7.2.1",
     "mobx-react-form": "^3.2.0",

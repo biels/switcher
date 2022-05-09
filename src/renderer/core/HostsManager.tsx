@@ -5,7 +5,8 @@ import {makeObservable, observable} from "mobx";
 import {app} from "@electron/remote";
 import {openPathInExplorer} from "../../utils/switcherUtils";
 import * as _ from 'lodash'
-import {genHosts} from "../../utils/hosts/hosts-gen";
+import {domains, genHosts} from "../../utils/hosts/hosts-gen";
+import json5 from "json5";
 
 export class HostsManager {
     appStore: AppStore;
@@ -13,17 +14,25 @@ export class HostsManager {
     constructor(appStore: AppStore) {
         this.appStore = appStore;
         makeObservable(this);
-        setTimeout(() => {
+        setTimeout(async () => {
             // this.test1()
             this.refreshMode();
+            await this.autoEnableDisable()
         })
     }
 
     @observable
     mode: 'lan' | 'wan' | 'indeterminate' = "lan";
+    @observable
+    desiredMode: 'lan' | 'wan' | null = null;
 
     @observable
     hostsLastUpdatedAt: Date = null;
+
+    @observable
+    loading = {
+        settingMode: null
+    }
 
 
 //
@@ -76,31 +85,59 @@ export class HostsManager {
         return `${app.getPath('home')}\\tools`
     }
 
+
     getHostsPatchFilePath() {
         return `${this.getToolsDir()}\\hosts.template.txt`
     }
 
     getHostsPatchFileContent() {
         // if not exists, create it
-        if (!fs.existsSync(this.getHostsPatchFilePath())) {
-            let defaultContent = this.getDefaultPatchContent();
-            fs.writeFileSync(this.getHostsPatchFilePath(), defaultContent, {encoding: "utf-8"});
+        let jsonContent = this.getHostsJSONPatchFileContent();
+        let content = json5.parse(jsonContent);
+        return genHosts(content);
+        // if (!fs.existsSync(this.getHostsPatchFilePath())) {
+        //     let defaultContent = content;
+        //     fs.writeFileSync(this.getHostsPatchFilePath(), defaultContent, {encoding: "utf-8"});
+        // }
+        // return fs.readFileSync(this.getHostsPatchFilePath(), {encoding: "utf-8"});
+    }
+
+    getHostsJSONPatchFilePath() {
+        return `${this.getToolsDir()}\\hosts.template.json5`
+    }
+
+    getHostsJSONPatchFileContent() {
+        // if not exists, create it
+        if (!fs.existsSync(this.getHostsJSONPatchFilePath())) {
+            let defaultContent = this.getDefaultJSONPatchContent();
+            fs.writeFileSync(this.getHostsJSONPatchFilePath(), defaultContent, {encoding: "utf-8"});
         }
-        return fs.readFileSync(this.getHostsPatchFilePath(), {encoding: "utf-8"});
+        return fs.readFileSync(this.getHostsJSONPatchFilePath(), {encoding: "utf-8"});
     }
 
     private getDefaultPatchContent() {
         return genHosts()
     }
 
+    private getDefaultJSONPatchContent() {
+        return json5.stringify(domains, null, 2);
+    }
+
     async editHostsFile(apply = true) {
+        this.loading.settingMode = apply ? 'lan' : 'wan';
         // Edit hosts file according to the mode
         let content = this.readHostsFile()
         let newContent = this.mergeHostsFile(content, this.getHostsPatchFileContent(), !apply)
         // fs.writeFileSync(this.getHostsFilePath(), newContent, {encoding: "utf-8"});
-        console.log(`newContent`, newContent);
+        // console.log(`newContent`, newContent);
         await this.writeHostsFile(newContent)
-        this.refreshMode();
+        // setTimeout(() => this.refreshMode(), 100)
+        let check = () => {
+            if (this.loading.settingMode && this.refreshMode())
+                this.loading.settingMode = null;
+        };
+        let ms = [100, 500, 700, 1000, 2000];
+        ms.map(m => setTimeout(check, m))
     }
 
     mergeHostsFile(exisitngHosts, patchHosts, subtract = false) {
@@ -179,8 +216,12 @@ export class HostsManager {
 
     }
 
-    refreshMode() {
-        this.mode = this.checkHostsContainsPatch()
+    refreshMode(): boolean {
+        let newMode = this.checkHostsContainsPatch();
+        let b = newMode != this.mode;
+        this.mode = newMode
+        return b
+        // this.getCurrentPublicIp()
     }
 
     test1() {
@@ -232,8 +273,43 @@ export class HostsManager {
 
     resetPatchFile() {
         // Make backup of the patch file
-        fs.copyFileSync(this.getHostsPatchFilePath(), this.getHostsPatchFilePath() + '.bak');
-        fs.writeFileSync(this.getHostsPatchFilePath(), this.getDefaultPatchContent(), {encoding: "utf-8"});
+        fs.copyFileSync(this.getHostsJSONPatchFilePath(), this.getHostsJSONPatchFilePath() + '.bak');
+        fs.writeFileSync(this.getHostsJSONPatchFilePath(), this.getDefaultJSONPatchContent(), {encoding: "utf-8"});
+    }
+
+    publicIp: string = ''
+
+    async getCurrentPublicIp() {
+        // icanhazip.com
+        let url = 'https://icanhazip.com/'
+        let response = await fetch(url);
+        let ip = await response.text();
+        this.publicIp = ip
+        return ip
+    }
+
+    async getDesiredMode() {
+        let currentPublicIp = await this.getCurrentPublicIp();
+        let content = json5.parse(this.getHostsJSONPatchFileContent())
+        let targetIp = content._publicIp
+        if (currentPublicIp.trim() === targetIp.trim()) {
+            this.desiredMode = 'lan'
+        } else {
+            this.desiredMode = 'wan'
+        }
+        return this.desiredMode
+    }
+
+    async autoEnableDisable() {
+        let desiredMode = await this.getDesiredMode()
+        if (desiredMode === this.mode) {
+            return
+        }
+        if (desiredMode === 'lan') {
+            await this.editHostsFile(true)
+        } else {
+            await this.editHostsFile(false)
+        }
     }
 
 

@@ -5,7 +5,7 @@ import {useAppStore} from "@/renderer/core/AppStore";
 import json5 from "json5";
 import {MdDelete, MdFolderOpen, MdOpenInNew, MdOutlineSelectAll, MdPlayArrow, MdRefresh} from "react-icons/md";
 import {GrCheckboxSelected} from "react-icons/gr";
-import {openFileInNotepad, openPathInExplorer} from "../../utils/switcherUtils";
+import {openFileInCode, openFileInNotepad, openPathInExplorer} from "../../utils/switcherUtils";
 import * as electron from "electron";
 import {bindWithAS, useAS} from "../../utils/utils";
 import {PowerShell} from "node-powershell";
@@ -45,6 +45,7 @@ export const HostsView = observer((props: SettingsViewProps) => {
         'indeterminate': {text: 'Mixed Mode', color: '#c4a408'}
     }
     let statusObj = statusText[hostsManager.mode];
+    let consistent = hostsManager.desiredMode === hostsManager.mode;
     return <Container>
         {/*<button onClick={() => {*/}
         {/*    hostsManager.mode == 'lan' ? hostsManager.mode = 'wan' : hostsManager.mode = 'lan';*/}
@@ -53,29 +54,30 @@ export const HostsView = observer((props: SettingsViewProps) => {
         {/*</button>*/}
         <div style={{display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 6, alignItems: 'center', padding: 16}}>
             <div style={{backgroundColor: statusObj.color, width: 12, height: 12, borderRadius: 10}}/>
-            {statusObj.text}
+            {statusObj.text} {consistent ? '' : `(should be ${hostsManager.desiredMode == 'lan' ? 'enabled' : 'disabled'})`}
         </div>
 
         <div style={{display: 'grid', gridAutoFlow: 'column'}}>
             <button style={{padding: 8}} disabled={hostsManager.mode == 'lan'} onClick={async () => {
                 await hostsManager.editHostsFile(true)
-                hostsManager.mode = 'lan'
+                // hostsManager.mode = 'lan'
+                // hostsManager.mode = hostsManager.refreshMode()
                 navigate(`/hosts`)
             }}>Set LAN (Enable)
             </button>
 
             <button disabled={hostsManager.mode == 'wan'} onClick={async () => {
                 await hostsManager.editHostsFile(false)
-                hostsManager.mode = 'wan'
+                // hostsManager.mode = 'wan'
                 navigate(`/hosts`)
             }}>Set WAN (Disable)
             </button>
         </div>
-
+        <div>Public IP: {hostsManager.publicIp}</div>
         <div>Patch:</div>
         <textarea value={hostsManager.getHostsPatchFileContent()}></textarea>
         <div style={{display: 'grid', gridAutoFlow: 'column'}}>
-            <button onClick={() => openPathInExplorer(hostsManager.getHostsPatchFilePath())}>Open patch file</button>
+            <button onClick={() => openFileInCode(hostsManager.getHostsJSONPatchFilePath())}>Open patch file</button>
             <button onClick={() => {
                 hostsManager.openToolsDir()
             }}>Open Tools Dir
@@ -84,6 +86,13 @@ export const HostsView = observer((props: SettingsViewProps) => {
                 hostsManager.resetPatchFile()
                 navigate(`/hosts`)
             }}>Reset patch file
+            </button>
+            <button
+              disabled={consistent}
+              onClick={() => {
+                hostsManager.autoEnableDisable()
+                navigate(`/hosts`)
+            }}>Auto
             </button>
         </div>
         Hosts content:

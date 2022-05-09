@@ -8,7 +8,8 @@ interface Domain {
     [domainPart: string]: Domain | any
 }
 
-let domains: Domain = {
+export let domains: Domain = {
+    _publicIp: '185.184.150.108',
     _ip: '192.168.1.150',
     'protocolapp.net': {
         'ci': {},
@@ -17,11 +18,12 @@ let domains: Domain = {
         'dev': {},
         'beta': {},
         's3': {},
+        'bis': {},
+        'bis-dev': {},
+        'bcn': {},
     },
     'barcelonainernationalsocial.com': {
         enable: false,
-        'bis': {},
-        'bis-dev': {},
     }
 }
 export let genHosts = (d = domains) => {
@@ -39,7 +41,7 @@ export let genHosts = (d = domains) => {
             entries.push(`${newContext.ip} ${newContext.path.join('.')}`)
         }
         for (let key in domainObj) {
-            if (['_ip', 'self', 'enable'].includes(key)) continue
+            if (['_ip', '_publicIp', 'self', 'enable'].includes(key)) continue
             entries.push(...getAllEntriesForDomain(key, domainObj[key], newContext))
         }
         return entries

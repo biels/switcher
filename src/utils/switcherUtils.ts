@@ -30,3 +30,6 @@ export let openFileInNotepad = (path: string) => {
         require('child_process').exec(`xdg-open ${path}`);
     }
 };
+export let openFileInCode = (path: string) => {
+    require('child_process').exec(`code ${path}`);
+};
