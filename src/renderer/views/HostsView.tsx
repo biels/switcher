@@ -47,11 +47,6 @@ export const HostsView = observer((props: SettingsViewProps) => {
     let statusObj = statusText[hostsManager.mode];
     let consistent = hostsManager.desiredMode === hostsManager.mode;
     return <Container>
-        {/*<button onClick={() => {*/}
-        {/*    hostsManager.mode == 'lan' ? hostsManager.mode = 'wan' : hostsManager.mode = 'lan';*/}
-        {/*}}>*/}
-        {/*    {hostsManager.mode == 'lan' ? 'Enable LAN Mode' : 'Enable WAN Mode'}*/}
-        {/*</button>*/}
         <div style={{display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 6, alignItems: 'center', padding: 16}}>
             <div style={{backgroundColor: statusObj.color, width: 12, height: 12, borderRadius: 10}}/>
             {statusObj.text} {consistent ? '' : `(should be ${hostsManager.desiredMode == 'lan' ? 'enabled' : 'disabled'})`}
@@ -60,15 +55,12 @@ export const HostsView = observer((props: SettingsViewProps) => {
         <div style={{display: 'grid', gridAutoFlow: 'column'}}>
             <button style={{padding: 8}} disabled={hostsManager.mode == 'lan'} onClick={async () => {
                 await hostsManager.editHostsFile(true)
-                // hostsManager.mode = 'lan'
-                // hostsManager.mode = hostsManager.refreshMode()
                 navigate(`/hosts`)
             }}>Set LAN (Enable)
             </button>
 
             <button disabled={hostsManager.mode == 'wan'} onClick={async () => {
                 await hostsManager.editHostsFile(false)
-                // hostsManager.mode = 'wan'
                 navigate(`/hosts`)
             }}>Set WAN (Disable)
             </button>
@@ -88,7 +80,7 @@ export const HostsView = observer((props: SettingsViewProps) => {
             }}>Reset patch file
             </button>
             <button
-              disabled={consistent}
+              // disabled={consistent}
               onClick={() => {
                 hostsManager.autoEnableDisable()
                 navigate(`/hosts`)
