@@ -67,7 +67,7 @@ export const HostsView = observer((props: SettingsViewProps) => {
         </div>
         <div>Public IP: {hostsManager.publicIp}</div>
         <div>Patch:</div>
-        <textarea value={hostsManager.getHostsPatchFileContent()}></textarea>
+        <textarea style={{height: 80}} value={hostsManager.getHostsPatchFileContent()}></textarea>
         <div style={{display: 'grid', gridAutoFlow: 'column'}}>
             <button onClick={() => openFileInCode(hostsManager.getHostsJSONPatchFilePath())}>Open patch file</button>
             <button onClick={() => {
