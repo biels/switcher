@@ -21,6 +21,9 @@ export let domains: Domain = {
         'bis': {},
         'bis-dev': {},
         'bcn': {},
+        'proxy-agents': {},
+        'proxy-api': {},
+        'aoh': {},
     },
     'barcelonainernationalsocial.com': {
         enable: false,
