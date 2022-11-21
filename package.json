@@ -1,6 +1,6 @@
 {
   "name": "switcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Switch between development environments",
   "author": "Biel Simon",
   "license": "MIT",
