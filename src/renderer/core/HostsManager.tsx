@@ -16,6 +16,7 @@ export class HostsManager {
         makeObservable(this);
         setTimeout(async () => {
             // this.test1()
+            if (process.platform != 'win32') return
             this.refreshMode();
             await this.autoEnableDisable()
         })
@@ -37,12 +38,14 @@ export class HostsManager {
 
 //
     readHostsFile() {
+        if (process.platform != 'win32') return ''
         let filePath = this.getHostsFilePath();
         let content = fs.readFileSync(filePath, {encoding: "utf-8"});
         return content;
     }
 
     async writeHostsFile(newContent) {
+        if (process.platform != 'win32') return
         if (!_.isString(newContent)) return
         if (newContent.length == 0) return
         // newContent = 'hi'
@@ -108,10 +111,12 @@ export class HostsManager {
 
     getHostsJSONPatchFileContent() {
         // if not exists, create it
+        // checking write permissions
         if (!fs.existsSync(this.getHostsJSONPatchFilePath())) {
             let defaultContent = this.getDefaultJSONPatchContent();
             fs.writeFileSync(this.getHostsJSONPatchFilePath(), defaultContent, {encoding: "utf-8"});
         }
+
         return fs.readFileSync(this.getHostsJSONPatchFilePath(), {encoding: "utf-8"});
     }
 
@@ -124,6 +129,7 @@ export class HostsManager {
     }
 
     async editHostsFile(apply = true) {
+        if (process.platform != 'win32') return
         this.loading.settingMode = apply ? 'lan' : 'wan';
         // Edit hosts file according to the mode
         let content = this.readHostsFile()

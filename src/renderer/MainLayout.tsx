@@ -106,9 +106,9 @@ const MainLayout = observer(() => {
                             <Link to="/settings">
                                 <div>Settings</div>
                             </Link>
-                            <Link to="/hosts">
+                            {process.platform == 'win32' ? <Link to="/hosts">
                                 <div>Hosts</div>
-                            </Link>
+                            </Link> : <div/>}
                             <div/>
                             <Link to="/json">
                                 <div>JSON</div>
@@ -121,7 +121,7 @@ const MainLayout = observer(() => {
                                 <Route path="/example-view-1" element={<ExampleView1/>}/>
                                 <Route path="/example-view-2" element={<ExampleView2/>}/>
                                 <Route path="/open" element={<OpenProjectsView/>}/>
-                                <Route path="/hosts" element={<HostsView/>}/>
+                                {process.platform == 'win32' && <Route path="/hosts" element={<HostsView/>}/>}
                                 <Route path="/" element={<HomeView/>}/>
                                 <Route path="/settings" element={<SettingsView/>}/>
                             </Routes>
