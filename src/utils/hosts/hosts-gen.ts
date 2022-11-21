@@ -24,9 +24,11 @@ export let domains: Domain = {
         'proxy-agents': {},
         'proxy-api': {},
         'aoh': {},
+        'plex': {},
+        'uz': {},
     },
-    'barcelonainernationalsocial.com': {
-        enable: false,
+    'barcelonainternationalsocial.com': {
+        enable: true,
     }
 }
 export let genHosts = (d = domains) => {
