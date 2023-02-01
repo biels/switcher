@@ -110,10 +110,14 @@ export const WorkspaceView = observer((props: WorkspaceViewProps) => {
                                }}
                         />
                         <datalist id={listName}>
-                            {Object.entries(it.project.getPackageJsonScripts(it.path.path) || {}).map(([k, v]) => {
-                                return <option key={k} value={`yarn ${k}`}>{v}</option>
+                            {/*{Object.entries(it.project.getPackageJsonScripts(it.path.path) || {}).map(([k, v]) => {*/}
+                            {/*    return <option key={k} value={`yarn ${k}`}>{v}</option>*/}
+                            {/*})}*/}
+                            {it.project.getCommands(it.path.path).map(({k, v, cmd}) => {
+                                return <option key={k} value={cmd}>{v}</option>
                             })}
                         </datalist>
+                        <button onClick={() => it.project.setCommandToDefault(it.path.path)}>Auto</button>
                     </ActionsContainer>
                 </div>
             })}

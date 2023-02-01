@@ -184,9 +184,49 @@ export class ProjectController {
     getPackageJsonScripts(subpath) {
         let p = this.getPathPackageJson(subpath)
         if (p) {
-            return p.scripts
+            return p.scripts as Record<string, string>
         }
         return null
 
+    }
+    getCommands(subpath, runnerCmd = 'yarn') {
+        /**
+         * Object.entries(it.project.getPackageJsonScripts(it.path.path) || {}).map(([k, v]) => {
+         *                                 return <option key={k} value={`yarn ${k}`}>{v}</option>
+         *                             })
+         */
+        let scripts = this.getPackageJsonScripts(subpath)
+        if (scripts) {
+            return Object.entries(scripts).map(([k, v]) => {
+                return {
+                    k: k,
+                    v: v,
+                    cmd: `${runnerCmd} ${k}`
+                }
+            })
+        }
+        return []
+    }
+    getDevDefaultCommand(subpath, runnerCmd = 'yarn') {
+        let scripts = this.getCommands(subpath, runnerCmd)
+        // look for debug, dev, start, run or test
+        // if none of them is found, return the first one
+        let defaultCmd = scripts.find(s => ['debug', 'dev', 'start', 'run', 'test'].indexOf(s.k) !== -1)
+        if (!defaultCmd) {
+            defaultCmd = scripts[0]
+        }
+        return defaultCmd
+    }
+    setCommandToDefault(subpath, runnerCmd = 'yarn') {
+        let defaultCmd = this.getDevDefaultCommand(subpath, runnerCmd)
+        if (defaultCmd) {
+            // set it.path.startCmd
+            let p = this.data.paths.find(p => p.path == subpath)
+            if (p) {
+                p.startCmd = defaultCmd.cmd
+                // save
+                this.saveInProjectPath()
+            }
+        }
     }
 }
