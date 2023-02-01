@@ -5,6 +5,7 @@ import {MdCopyAll, MdKeyboardReturn, MdOpenInNew, MdPlayArrow} from "react-icons
 import {openPathInExplorer} from "../../utils/switcherUtils";
 import {useAppStore} from "@/renderer/core/AppStore";
 import * as electron from "electron";
+import {nextTimeout} from "../../utils/utils";
 
 const Container = styled.div`
   display: grid;
@@ -40,13 +41,15 @@ export interface WorkspaceViewProps {
 export const WorkspaceView = observer((props: WorkspaceViewProps) => {
     let store = useAppStore()
     return <Container>
-        <h3>Selected paths to open <button onClick={(e) => {
-            store.selectedSubpaths.forEach(it => {
+        <h3>Selected paths to open <button onClick={async (e) => {
+            for (let i = 0; i < store.selectedSubpaths.length; i++){
+                const it = store.selectedSubpaths[i];
                 let command = it.path.startCmd;
                 if (e.shiftKey) command = ''
                 if (e.ctrlKey) command = (command || '').split(' ')[0]
-                return store.conEmuManager.openConEmuForPath(it.fullPath, command);
-            })
+                await store.conEmuManager.openConEmuForPath(it.fullPath, command);
+                await nextTimeout(1000)
+            }
         }}>Open all terminals</button></h3>
         <ListContainer>
             {store.selectedSubpaths.map((it, index) => {
