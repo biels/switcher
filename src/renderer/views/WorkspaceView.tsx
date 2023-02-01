@@ -86,7 +86,10 @@ export const WorkspaceView = observer((props: WorkspaceViewProps) => {
                             return store.conEmuManager.openConEmuForPath(it.fullPath, command);
                         }}>Open terminal
                         </button>
-                        <input value={it.path.startCmd} onChange={e => it.path.startCmd = e.target.value} list={listName}
+                        <input value={it.path.startCmd} onChange={e => {
+                            it.path.startCmd = e.target.value;
+                            store.saveLocalData();
+                        }} list={listName}
                                onContextMenu={(e) => {
                                    let scripts = it.project.getPackageJsonScripts(it.path.path);
                                    if(!scripts) return;

@@ -223,7 +223,7 @@ export class ProjectController {
         return scripts[0]
 
     }
-    setCommandToDefault(subpath, runnerCmd = 'yarn') {
+   async setCommandToDefault(subpath, runnerCmd = 'yarn') {
         let defaultCmd = this.getDevDefaultCommand(subpath, runnerCmd)
         if (defaultCmd) {
             // set it.path.startCmd
@@ -231,7 +231,7 @@ export class ProjectController {
             if (p) {
                 p.startCmd = defaultCmd.cmd
                 // save
-                this.saveInProjectPath()
+                await this.appStore.saveLocalData()
             }
         }
     }
