@@ -211,11 +211,17 @@ export class ProjectController {
         let scripts = this.getCommands(subpath, runnerCmd)
         // look for debug, dev, start, run or test
         // if none of them is found, return the first one
-        let defaultCmd = scripts.find(s => ['debug', 'dev', 'start', 'run', 'test'].indexOf(s.k) !== -1)
-        if (!defaultCmd) {
-            defaultCmd = scripts[0]
+        // find in order of priority (look for debug in all scripts, then dev, then start, then run, then test)
+        let priorities = ['debug', 'dev', 'start', 'run', 'test']
+        for (let i = 0; i < priorities.length; i++) {
+            const priority = priorities[i];
+            let script = scripts.find(s => s.k === priority)
+            if (script) {
+                return script
+            }
         }
-        return defaultCmd
+        return scripts[0]
+
     }
     setCommandToDefault(subpath, runnerCmd = 'yarn') {
         let defaultCmd = this.getDevDefaultCommand(subpath, runnerCmd)
